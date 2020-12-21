@@ -1,0 +1,7 @@
+build/
+dist/
+Garcom-ejb/nbproject/
+Garcom-war/nbproject/
+Garcom-war/build/
+Garcom-ejb/build/
+nbproject/private/
