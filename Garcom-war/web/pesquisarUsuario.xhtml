@@ -1,0 +1,92 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="titulo">
+            Usuários
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#configuracoesMenu').addClass('active');
+            </script>
+
+            <h:form id="pesquisarUsuarioForm" >
+                <p:growl id="criarUsuarioGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Cadastrar" outcome="criarUsuario.xhtml" icon="ui-icon-plus"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Nome" for="nomeInputText" />
+                            <p:inputText id="nomeInputText" value="#{ managerPesquisarUsuario.entidade.nome }"
+                                         required="false" requiredMessage="Nome é obrigatório" />
+                        </div>
+                    
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Login" for="loginInputText" />
+                            <p:inputText id="loginInputText" value="#{ managerPesquisarUsuario.entidade.login }"
+                                         required="false" requiredMessage="Login é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Email" for="emailInputText" />
+                            <p:inputText id="emailInputText" value="#{ managerPesquisarUsuario.entidade.email }"
+                                         required="false" requiredMessage="Email é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="command col-md-12">
+                        <p:commandButton styleClass="ui-priority-primary" value="Pesquisar" icon="ui-icon-search"
+                                         actionListener="#{managerPesquisarUsuario.pesquisar()}" update="pesquisarUsuarioForm:resultadosFieldset"/>
+                    </div>                    
+                </p:fieldset>
+                <p:fieldset id="resultadosFieldset" >
+                    <h3 class="tituloFieldset">
+                        Resultados
+                    </h3>
+                    <p:dataTable id="idiomasDataTable" var="usuario" value="#{ managerPesquisarUsuario.resultados }"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="{currentPage} de {totalPages}"
+                                 rowsPerPageTemplate="5,10,15"
+                                 rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                        <f:facet name="header" >
+                            <p:outputLabel value="Usuarios #{managerPesquisarUsuario.resultados.size() > 0 ? '('.concat(managerPesquisarUsuario.resultados.size()).concat(')'): ''}" />
+                        </f:facet>
+
+                        <p:column headerText="Opções" width="10%" styleClass="options3">
+                            <p:button title="visualizar" icon="ui-icon-search" outcome="visualizarUsuario.xhtml?id=#{usuario.id}"/>
+                        </p:column>  
+
+                        <p:column headerText="Nome" >
+                            <h:outputText value="#{ usuario.nome }"/>
+                        </p:column>
+                        <p:column headerText="Login" >
+                            <h:outputText value="#{ usuario.login }"/>
+                        </p:column>
+                        <p:column headerText="Email" >
+                            <h:outputText value="#{ usuario.email }"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

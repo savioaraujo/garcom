@@ -1,0 +1,10 @@
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+					    <p:outputLabel value="$alias" for="${name}Autocomplete"/>
+					    <p:autoComplete id="${name}Autocomplete" value="#{ manager${operation}${entity}.entidade.${fieldNameLower}}" scrollHeight="200"
+					                    required="true" requiredMessage="Classe é obrigatório"
+					                    forceSelection="true" dropdown="true" var="${name}" itemValue="#{ $name }" completeMethod="#{ autocompletes.$name}"
+					                    converter="conversor" minQueryLength="3" >
+					    </p:autoComplete>
+					</div>
+				</div>

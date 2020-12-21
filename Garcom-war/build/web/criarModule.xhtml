@@ -1,0 +1,40 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="title">
+            Cadastro de Module
+        </ui:define>
+
+        <ui:define name="content">
+
+            <script>
+                $('#configuracoesMenu').addClass('active');
+            </script>
+            <h:form id="criarModuleForm" >
+                <p:growl id="criarModuleGrowl" autoUpdate="true" />
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Name" for="nameInputText" />
+                            <p:inputText id="nameInputText" value="#{ managerCriarModule.entidade.name }"
+                                         required="false" requiredMessage="Name é obrigatório" />
+                        </div>
+                    </div>
+                </p:fieldset >
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" actionListener="#{managerCriarModule.salvar()}" update=":criarModuleForm:campoFieldset"/>
+                    <p:button rendered="#{managerCriarModule.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarModule.xhtml" />
+                    <p:button rendered="#{managerCriarModule.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarModule.xhtml?id=#{managerCriarModule.entidade.id}" />
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

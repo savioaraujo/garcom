@@ -1,0 +1,5 @@
+                            <p:column headerText="${fieldName}" >
+                                <h:outputText value="#{ ${entityNameLower}.${fieldNameLower} }">
+                                	<f:convertDateTime pattern="dd/MM/yyyy" locale="pt"/>
+                                </h:outputText>
+                            </p:column>

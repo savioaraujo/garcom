@@ -1,0 +1,232 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Cadastro de Carteira
+        </ui:define>
+
+        <ui:define name="titulo">
+            Cadastro de Carteira
+        </ui:define>
+
+        <ui:define name="content">
+            <h:form id="criarCarteiraLojaForm" >
+                <p:growl id="criarProdutoGrowl" autoUpdate="true" />
+
+                <p:fieldset id="campoFieldset" >
+
+                    <div class="row">
+                        <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
+                            <p:outputLabel value="Cliente" for="clienteInputText" />
+                            <p:autoComplete id="clienteInputText" value="#{ managerCriarCarteiraLoja.entidade.proprietario}" scrollHeight="200"
+                                            forceSelection="true" dropdown="true" var="cliente" itemValue="#{ cliente }" 
+                                            itemLabel="#{ cliente.nome }" completeMethod="#{ managerAutocomplete.autocompleteClienteSemClienteFinal}"
+                                            converter="conversor" minQueryLength="3" >
+                                <p:ajax event="itemSelect" process="@this" listener="#{managerCriarCarteiraLoja.buscarCarteira()}"
+                                        update="@this
+                                        :criarCarteiraLojaForm:clienteInputText
+                                        :criarCarteiraLojaForm:adicionarItemCarteiraButton
+                                        :criarCarteiraLojaForm:tipoMovimentacaoAutocomplete
+                                        :criarCarteiraLojaForm:motivoMovimentacaoInputText
+                                        :criarCarteiraLojaForm:valorInputText
+                                        :criarCarteiraLojaForm:itensVendaDataTable
+                                        :criarCarteiraLojaForm:totalVendaOutputLabel
+                                        :criarCarteiraLojaForm:totalVendaOutputLabel_top"/>
+                            </p:autoComplete>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <p:outputLabel value="Tipo de movimentação" for="tipoMovimentacaoAutocomplete" />
+                            <p:autoComplete id="tipoMovimentacaoAutocomplete" value="#{ managerCriarCarteiraLoja.itemMovimentacaoCarteiraLoja.tipoMovimentacaoCarteiraLoja}" scrollHeight="200"
+                                            disabled="#{managerCriarCarteiraLoja.entidade.proprietario.id eq null}"
+                                            forceSelection="false" dropdown="true" var="tipo" itemValue="#{ tipo}" 
+                                            required="true" requiredMessage="Tipo de movimentação é obrigatório."
+                                            itemLabel=" #{ tipo.tipo eq null ? '' : tipo.tipo eq 'CREDITO' ? '[ + ]' : '[ - ]'}  #{ tipo.descricao}" completeMethod="#{ managerAutocomplete.autocompleteTipoMovimentacaoCarteira}"
+                                            converter="conversor" minQueryLength="3" >
+                            </p:autoComplete>
+                        </div>
+
+                        <div class="col-md-4">
+                            <p:outputLabel value="Descrição" for="motivoMovimentacaoInputText" />
+                            <p:inputText id="motivoMovimentacaoInputText" value="#{managerCriarCarteiraLoja.itemMovimentacaoCarteiraLoja.motivo}" 
+                                         disabled="#{managerCriarCarteiraLoja.entidade.proprietario.id eq null}" >
+                            </p:inputText>
+                        </div>
+
+                        <div class="col-md-2">
+                            <p:outputLabel value="Valor." for="valorInputText" />
+                            <p:inputText id="valorInputText" value="#{managerCriarCarteiraLoja.itemMovimentacaoCarteiraLoja.valor}" 
+                                         disabled="#{managerCriarCarteiraLoja.entidade.proprietario.id eq null}"
+                                         onkeypress="$(this).autoNumeric({aSign:'R$ ', aSep: '.', aDec: ','} );" 
+                                         required="true" requiredMessage="Informa o valor unitário" >
+                                <f:convertNumber type="currency" locale="pt-BR" />
+                            </p:inputText>
+                        </div>
+
+                        <div class="col-md-1 margin-top">
+                            <p:commandButton id="adicionarItemCarteiraButton" styleClass="ui-priority-primary" value="Adicionar"
+                                             disabled="#{managerCriarCarteiraLoja.entidade.proprietario.id eq null}"
+                                             icon="ui-icon-plus"
+                                             title="Adicionar produto"
+                                             actionListener="#{managerCriarCarteiraLoja.adicionarItem()}"
+                                             process="@this
+                                             :criarCarteiraLojaForm:clienteInputText
+                                             :criarCarteiraLojaForm:tipoMovimentacaoAutocomplete
+                                             :criarCarteiraLojaForm:motivoMovimentacaoInputText
+                                             :criarCarteiraLojaForm:valorInputText" 
+                                             update="@this
+                                             :criarCarteiraLojaForm:clienteInputText
+                                             :criarCarteiraLojaForm:tipoMovimentacaoAutocomplete
+                                             :criarCarteiraLojaForm:motivoMovimentacaoInputText
+                                             :criarCarteiraLojaForm:valorInputText
+                                             :criarCarteiraLojaForm:itensVendaDataTable
+                                             :criarCarteiraLojaForm:totalVendaOutputLabel
+                                             :criarCarteiraLojaForm:totalVendaOutputLabel_top"/>
+                        </div>
+                    </div>  
+                    <div class="row">
+                        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11">
+                            <p:outputLabel value="Saldo:"/>
+                            <p:outputLabel id="totalVendaOutputLabel_top" value="#{managerCriarCarteiraLoja.entidade.saldo}">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <p:panel id="itensVendaDataTable" styleClass="noborder">
+
+                            <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                <div class="box-header with-border" style="text-align: center;">
+                                    <h3 class="box-title" >Movimentações  #{ not empty managerCriarCarteiraLoja.entidade.itensMovimentacaoCarteiraLoja ? '('.concat(managerCriarCarteiraLoja.entidade.itensMovimentacaoCarteiraLoja.size()).concat(')') : ''}</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Data</th>
+                                                    <th>Tipo</th>
+                                                    <th>Descrição</th>
+                                                    <th>Valor</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat value="#{ managerCriarCarteiraLoja.entidade.itensMovimentacaoCarteiraLoja }" var="item">
+                                                    <tr>
+                                                        <td>
+                                                            <p:button  title="visualizar venda"  icon="ui-icon-search" rendered="#{item.venda.codigo ne null}" outcome="visualizarVenda.xhtml?id=#{item.venda.id}"  />
+                                                        </td>
+                                                        <td>
+                                                            <h:outputText value="#{ item.dataCadastro}">
+                                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt"/>
+                                                            </h:outputText>
+                                                        </td>
+                                                        <td><h:outputText value="#{ item.tipoMovimentacaoCarteiraLoja.tipo.nome } - #{ item.tipoMovimentacaoCarteiraLoja.descricao }" /> 
+                                                        </td>
+                                                        <td><h:outputText value="#{ item.motivo }" /></td>
+                                                        <td>
+                                                            <h:outputText value="#{ item.tipoMovimentacaoCarteiraLoja.tipo eq 'CREDITO' ? '' : '- ' }"/>
+                                                            <h:outputText value="#{ item.valor }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <p:outputLabel value="Nenhum item adicionado" rendered="#{empty managerCriarCarteiraLoja.entidade.itensMovimentacaoCarteiraLoja}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>                    
+                    <div class="row">
+                        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11" style="text-align: right">
+                            <p:outputLabel value="Saldo:"/>
+                            <p:outputLabel id="totalVendaOutputLabel" value="#{managerCriarCarteiraLoja.entidade.saldo}">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                    </div>
+
+                </p:fieldset>
+
+                <p:dialog id="clienteDialog" widgetVar="clienteDialog" header="Cliente" dynamic="true"
+                          closable="true" closeOnEscape="true"
+                          modal="true" appendTo="@this" resizable="false" width="80%" height="600px" draggable="false">
+
+
+                    <p:fieldset id="campoFieldsetCliente" >
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Nome" for="nomeInputText" />
+                                <p:inputText id="nomeInputText" value="#{ managerCriarCarteiraLoja.clienteDialog.nome }"
+                                             required="true" requiredMessage="Nome é obrigatório" />
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Apelido" for="apelidoInputText" />
+                                <p:inputText id="apelidoInputText" value="#{ managerCriarCarteiraLoja.clienteDialog.apelido }"
+                                             required="false" requiredMessage="Apelido é obrigatório" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Cpf" for="cpfInputText" />
+                                <p:inputMask id="cpfInputText" value="#{ managerCriarCarteiraLoja.clienteDialog.cpf }"
+                                             mask="999.999.999-99"
+                                             required="false" requiredMessage="Cpf é obrigatório" />
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Data de Nascimento" for="dataNascimentoSelectOneMenu" />
+                                <p:calendar id="dataNascimentoSelectOneMenu" value="#{ managerCriarCarteiraLoja.clienteDialog.dataNascimento }"
+                                            showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Dci" for="dciInputText" />
+                                <p:inputText id="dciInputText" value="#{ managerCriarCarteiraLoja.clienteDialog.dci }"
+                                             required="false" requiredMessage="Dci é obrigatório" />
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="KCGN" for="cgnidInputText" />
+                                <p:inputText id="cgnidInputText" value="#{ managerCriarCarteiraLoja.clienteDialog.cgnid }"
+                                             required="false" requiredMessage="Cgnid é obrigatório" />
+                            </div>
+                        </div>
+                    </p:fieldset>
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" 
+                                         process="@this, :criarCarteiraLojaForm:campoFieldsetCliente"
+                                         actionListener="#{managerCriarCarteiraLoja.salvarCliente()}" update="@this, :criarCarteiraLojaForm:clienteInputText"/>
+                        <p:button value="Cancelar" onclick="clienteDialog.hide();"
+                                  icon="ui-icon-close"  />
+                    </div>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

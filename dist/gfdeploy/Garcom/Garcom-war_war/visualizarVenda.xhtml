@@ -1,0 +1,256 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Visualizar - <b>#{managerPesquisarVenda.entidade.tipoVenda.descricao.toUpperCase()}</b>
+        </ui:define>
+
+        <ui:define name="titulo">
+            Visualizar - <b>#{managerPesquisarVenda.entidade.tipoVenda.descricao.toUpperCase()}</b>
+        </ui:define>
+
+        <ui:define name="content">
+
+            <h:form id="pesquisarVendaForm" >
+                <p:growl id="criarProdutoGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarVenda.xhtml" icon="ui-icon-search"
+                                  id="teste"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear"
+                                       rendered="#{managerPesquisarVenda.entidade.statusVenda ne 'CANCELADA'}"
+                                       id="menuSlitButton">
+                            <p:menuitem value="Receber itens" 
+                                        icon="ui-icon-check" 
+                                        outcome="recebimentoItensVenda.xhtml?id=#{managerPesquisarVenda.entidade.id}"
+                                        rendered="#{not empty managerPesquisarVenda.itensPendentesDevolucao and managerPesquisarVenda.entidade.statusVenda ne 'CANCELADA'}"/>
+                            <p:menuitem value="Cancelar" icon="ui-icon-trash" 
+                                        rendered="#{managerPesquisarVenda.entidade.statusVenda ne 'CANCELADA'
+                                                    and managerPesquisarVenda.verifyPermissionActionRender('CANCELAR VENDA') }"
+                                        update="@this, :pesquisarVendaForm:confirmarCancelamentoButton"
+                                        oncomplete="deletarDialog.show();"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Informações : <h:outputText id="codigoVendaOutputlabel" value="#{managerPesquisarVenda.entidade.tipoVenda.descricao} #{managerPesquisarVenda.entidade.codigo eq null ? ' não cadastrado' : 'Nº '.concat(managerPesquisarVenda.entidade.codigo )}" />
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
+                            <p:outputLabel value="Cliente" />
+                            <br/>
+                            <h:outputText value="#{managerPesquisarVenda.entidade.cliente.nome}" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p:panel id="itensVendaDataTable" styleClass="noborder">
+
+                            <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                <div class="box-header with-border" style="text-align: center;">
+                                    <h3 class="box-title" >Items #{ not empty managerPesquisarVenda.entidade.itemVenda ? '('.concat(managerPesquisarVenda.entidade.itemVenda.size()).concat(')') : ''}</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                                <tr>
+                                                    <th>Descrição</th>
+                                                    <th>Valor Unitário</th>
+                                                    <th>Quantidade</th>
+                                                    <th>Valor Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat value="#{ managerPesquisarVenda.entidade.itemVenda }" var="item">
+                                                    <tr>
+
+                                                        <td>#{item.descricaoProduto}</td>
+                                                        <td><h:outputText value="#{ item.valorUnitario }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText></td>
+                                                        <td>#{ item.quantidade}</td>
+                                                        <td>
+                                                            <h:outputText value="#{ item.valorTotal }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <p:outputLabel value="Nenhum item adicionado" rendered="#{empty managerPesquisarVenda.entidade.itemVenda}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11" style="text-align: right">
+                            <p:outputLabel value="TOTAL:"/>
+                            <p:outputLabel id="totalVendaOutputLabel" value="#{managerPesquisarVenda.entidade.valorTotal}">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" style="padding: 0px">
+                            <p:panel id="informacoesAdicionaisPanel" styleClass="noborder" style="padding:0px!important">
+
+                                <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                     -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                     box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                    <div class="box-header with-border" style="text-align: center;">
+                                        <h3 class="box-title" >Informações adicionais</h3>
+                                    </div>
+                                    <!-- /.box-header -->
+                                    <div class="box-body">
+                                        <div class="table-responsive">
+                                            <table class="table no-margin">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><b>Abertar por</b></td>
+                                                        <td><h:outputText value="#{ managerPesquisarVenda.entidade.usuarioAbertura.nome }" >
+                                                            </h:outputText></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><b>Data Abertura</b></td>
+                                                        <td><h:outputText value="#{ managerPesquisarVenda.entidade.dataAbertura }" >
+                                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt"/>
+                                                            </h:outputText></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><b>Fechada por</b></td>
+                                                        <td><h:outputText value="#{ managerPesquisarVenda.entidade.usuarioAbertura.nome }" >
+                                                            </h:outputText></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><b>Data Fechamento</b></td>
+                                                        <td><h:outputText value="#{ managerPesquisarVenda.entidade.dataFechamento }" >
+                                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt"/>
+                                                            </h:outputText></td>
+                                                    </tr>
+                                                    <c:if test="#{managerPesquisarVenda.entidade.usuarioCancelamento ne null}">
+                                                        <tr>
+                                                            <td><b>Cancelado por</b></td>
+                                                            <td><h:outputText value="#{ managerPesquisarVenda.entidade.usuarioCancelamento.nome }" >
+                                                                </h:outputText></td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td><b>Data Cancelamento</b></td>
+                                                            <td><h:outputText value="#{ managerPesquisarVenda.entidade.dataCancelamento }" >
+                                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt"/>
+                                                                </h:outputText></td>
+                                                        </tr>
+                                                    </c:if>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                </div>
+
+                            </p:panel>
+                        </div>
+                        <div class="col-md-6" style="padding: 0px">
+
+                            <p:panel id="itensPagamento" styleClass="noborder" style="padding:0px!important" rendered="#{not empty managerPesquisarVenda.entidade.itensPagamento}">
+
+                                <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                     -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                     box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                    <div class="box-header with-border" style="text-align: center;">
+                                        <h3 class="box-title" >Informações de pagamento</h3>
+                                    </div>
+                                    <!-- /.box-header -->
+                                    <div class="box-body">
+                                        <div class="table-responsive">
+                                            <table class="table no-margin">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Forma pg.</th>
+                                                        <th>Valor</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ui:repeat value="#{ managerPesquisarVenda.entidade.itensPagamento }" var="item">
+                                                        <tr>
+                                                            <td>#{item.formaPagamento.nome }</td>
+                                                            <td><h:outputText value="#{ item.valor }" >
+                                                                    <f:convertNumber type="currency" locale="pt-BR"  />
+                                                                </h:outputText></td>
+                                                        </tr>
+                                                    </ui:repeat>
+                                                    <tr>
+                                                        <td colspan="5">
+                                                            <p:outputLabel value="Nenhum item adicionado" rendered="#{empty managerPesquisarVenda.entidade.itemVenda}" />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- /.table-responsive -->
+                                    </div>
+                                </div>
+                            </p:panel>
+
+                        </div>
+                    </div>
+                </p:fieldset>
+                <div class="command">
+                    <p:button value="Voltar" icon=" ui-icon-arrowreturn-1-w" outcome="pesquisarVenda.xhtml" />
+                </div>
+                <p:dialog header="Deseja realmente CANCELAR ESTA VENDA ?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div style="font-size:1.3em">
+                        Ao cancelar esta venda você ira retorna todos os itens desta venda ao estoque e as informações de pagamento desta venda serão apagadas.
+                    </div>
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton id="confirmarCancelamentoButton"
+                                             value="Sim" 
+                                             onclick="desabilitarBotao(this, true);"
+                                             oncomplete="desabilitarBotao(this, false);"
+                                             icon="ui-icon-check" actionListener="#{ managerPesquisarVenda.cancelarVenda() }" process="@this">
+                                <script>
+                                    desabilitarBotaoPorTempoDeterminado('pesquisarVendaForm:confirmarCancelamentoButton', 5);
+                                </script>
+                            </p:commandButton>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog> 
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -1,0 +1,135 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="titulo">
+            Cadastro de Usuário
+        </ui:define>
+
+        <ui:define name="content">
+
+            <script>
+                $('#configuracoesMenu').addClass('active');
+            </script>
+            <h:form id="criarUsuarioForm" >
+                <p:growl id="criarUsuarioGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarUsuario.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Nome" for="nomeInputText" />
+                            <p:inputText id="nomeInputText" value="#{ managerCriarUsuario.entidade.nome }"
+                                         required="true" requiredMessage="Nome é obrigatório" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Login" for="loginInputText" />
+                            <p:inputText id="loginInputText" value="#{ managerCriarUsuario.entidade.login }"
+                                         disabled="#{managerCriarUsuario.entidade.id ne null}"
+                                         required="true" requiredMessage="Login é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Email" for="emailInputText" />
+                            <p:inputText id="emailInputText" value="#{ managerCriarUsuario.entidade.email }"
+                                         required="false" requiredMessage="Email é obrigatório" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Password" for="passwordInputText" rendered="#{managerCriarUsuario.entidade.id eq null}" />
+                            <p:inputText id="passwordInputText" value="#{ managerCriarUsuario.entidade.password }" rendered="#{managerCriarUsuario.entidade.id eq null}"
+                                         required="false" requiredMessage="Password é obrigatório" />
+                        </div>
+                    </div>
+                </p:fieldset >
+                <p:fieldset id="grupoFieldset"  >
+                    <h3 class="tituloFieldset">Grupos</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Grupo" for="moduloAutocomplete" />
+                            <p:autoComplete id="moduloAutocomplete" value="#{ managerCriarUsuario.grupo }"
+                                            forceSelection="true" completeMethod="#{ managerAutocomplete.autocompleteGrupos}"
+                                            var="item" itemValue="#{item}" itemLabel="#{ item.name }"
+                                            required="true" requiredMessage="Módulo é um campo obrigatório"
+                                            dropdown="true" emptyMessage="Nenhum resultado encontrado" converter="conversor">
+                            </p:autoComplete>
+                        </div>
+                    </div>
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary" value="Adicionar" icon="ui-icon-plus" 
+                                         actionListener="#{managerCriarUsuario.adicionarGrupo()}" 
+                                         process="@this, 
+                                         :criarUsuarioForm:grupoFieldset"
+                                         update="@this, 
+                                         :criarUsuarioForm:grupoFieldset"/>
+                        <p:commandButton value="Cancelar" icon="ui-icon-close"
+                                         actionListener="#{managerCriarUsuario.instanciarGrupo()}" 
+                                         process="@this"
+                                         update="@this, 
+                                         :criarUsuarioForm:grupoFieldset" />
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <p:dataTable id="gruposDataTable" var="grupo" value="#{ managerCriarUsuario.entidade.group }"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="{currentPage} de {totalPages}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum grupo adicionado">
+
+                                <f:facet name="header" >
+                                    <p:outputLabel value="Grupos #{managerCriarUsuario.entidade.group.size() > 0 ? '('.concat(managerCriarUsuario.entidade.group.size()).concat(')'): ''}" />
+                                </f:facet>
+
+                                <p:column headerText="Opções" width="10%" styleClass="options3">
+                                    <p:commandButton title="Remover grupo" icon="ui-icon-trash" 
+                                                     disabled="#{managerCriarUsuario.grupo eq grupo}"
+                                                     onclick="removerGrupoDialog.show()" process="@this" update="@this" >
+                                        <f:setPropertyActionListener target="#{managerCriarUsuario.grupoRemocao}" value="#{grupo}" />
+                                    </p:commandButton>
+                                </p:column>  
+
+                                <p:column headerText="Módulo" >
+                                    <h:outputText value="#{ grupo.name }"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </p:fieldset>
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" 
+                                     process="@this, :criarUsuarioForm:campoFieldset"
+                                     icon="ui-icon-disk" actionListener="#{managerCriarUsuario.salvar()}" update=":criarUsuarioForm:campoFieldset"/>
+                    <p:button rendered="#{managerCriarUsuario.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarUsuario.xhtml" />
+                    <p:button rendered="#{managerCriarUsuario.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarUsuario.xhtml?id=#{managerCriarUsuario.entidade.id}" />
+                </div>
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="removerGrupoDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check"
+                                             process="@this"
+                                             update="@this, 
+                                             :criarUsuarioForm:gruposDataTable"
+                                             oncomplete="removerGrupoDialog.hide()"
+                                             actionListener="#{ managerCriarUsuario.removerGrupo() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="removerGrupoDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

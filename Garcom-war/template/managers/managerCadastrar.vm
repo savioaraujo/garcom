@@ -1,0 +1,33 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package br.com.garcom.manager.criar;
+
+import br.com.foxinline.annotations.AccessPermission;
+import br.com.garcom.main.ServicoGenerico;
+import br.com.garcom.manager.ManagerCriar;
+import br.com.garcom.modelo.${entityName};
+import br.com.garcom.servico.${entityName}Servico;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+/**
+ *
+ * @author evaldosavio
+ */
+@ManagedBean
+@ViewScoped
+@AccessPermission(moduleName = "", pageRedirect = "index.xhtml")
+public class ManagerCriar${entityName} extends ManagerCriar<${entityName}> {
+ 
+
+    @EJB
+    private ${entityName}Servico ${entityNameLower}Servico;
+
+    @Override
+    protected ServicoGenerico getServico() {
+        return ${entityNameLower}Servico;
+    }
+}

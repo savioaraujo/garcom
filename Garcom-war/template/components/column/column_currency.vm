@@ -1,0 +1,5 @@
+                            <p:column headerText="${fieldName}" >
+                                <h:outputText value="#{ ${entityNameLower}.${fieldNameLower} }">
+                                	<f:convertNumber type="currency" locale="pt-BR"  />
+                                </h:outputText>
+                            </p:column>

@@ -1,0 +1,156 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Pesquisar Vendas
+        </ui:define>
+
+        <ui:define name="titulo">
+            Pesquisar Vendas
+        </ui:define>
+
+        <ui:define name="content">
+
+            <h:form id="pesquisarVendaForm" >
+                <p:growl id="criarVendaGrowl" autoUpdate="true" />
+                <p:fieldset id="campoFieldset" >
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Tipo venda" for="tipoVendaSelectOneMenu"/>
+                            <p:selectOneMenu id="tipoVendaSelectOneMenu" value="#{managerPesquisarVenda.entidade.tipoVenda}">
+                                <f:selectItems value="#{enums.tipoVenda()}" var="tipo" itemLabel="#{tipo.descricao}" itemValue="#{tipo}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Codigo" for="codigoInputText"/>
+                            <p:inputText id="codigoInputText" value="#{ managerPesquisarVenda.entidade.codigo }"
+                                         onkeydown="$(this).validateNumberOnly();">
+                                <f:convertNumber type="number" /> 
+                            </p:inputText>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Cliente" for="clienteInputText" />
+                            <p:autoComplete id="clienteInputText" value="#{ managerPesquisarVenda.entidade.cliente}" scrollHeight="200"
+                                            forceSelection="true" dropdown="true" var="cliente" itemValue="#{ cliente }" 
+                                            itemLabel="#{ cliente.nome }" completeMethod="#{ managerAutocomplete.autocompleteCliente}"
+                                            converter="conversor" minQueryLength="2" >
+
+                            </p:autoComplete>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Data inicial" />
+                            <p:calendar id="dataInicialCalendar"
+                                        value="#{managerPesquisarVenda.dataInicial}"
+                                        showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Data Final" />
+                            <p:calendar id="dataFinalCalendar"
+                                        value="#{managerPesquisarVenda.dataFinal}"
+                                        showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <p:outputLabel value="Vendedor Abertura" for="vendedorAberturaInputText" />
+                            <p:autoComplete id="vendedorAberturaInputText" value="#{ managerPesquisarVenda.entidade.usuarioAbertura}" scrollHeight="200"
+                                            forceSelection="true" dropdown="true" var="usuario" itemValue="#{ usuario }" 
+                                            itemLabel="#{ usuario.nome }" completeMethod="#{ managerAutocomplete.autocompleteUsuario}"
+                                            converter="conversor" minQueryLength="3" >
+
+                            </p:autoComplete>
+                        </div>
+                        <div class="col-xs-6">
+                            <p:outputLabel value="Vendedor Fechamento" for="vendedorFechamentoInputText" />
+                            <p:autoComplete id="vendedorFechamentoInputText" value="#{ managerPesquisarVenda.entidade.usuarioFechamento}" scrollHeight="200"
+                                            forceSelection="true" dropdown="true" var="usuario" itemValue="#{ usuario}" 
+                                            itemLabel="#{ usuario.nome }" completeMethod="#{ managerAutocomplete.autocompleteUsuario}"
+                                            converter="conversor" minQueryLength="3" >
+
+                            </p:autoComplete>
+                        </div>
+                    </div>
+
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary" 
+                                         id="fecharVendaButton"
+                                         onclick="desabilitarBotao(this, true);"
+                                         oncomplete="desabilitarBotao(this, false);"
+                                         actionListener="#{managerPesquisarVenda.pesquisar()}"
+                                         process="@this, :pesquisarVendaForm:campoFieldset" update="@this, :pesquisarVendaForm:itensVendaDataTable"
+                                         value="Pesquisar" icon="ui-icon-check"/>
+                        <p:button value="Voltar" icon=" ui-icon-arrowreturn-1-w" outcome="index.xhtml" />
+                    </div>
+                    <div class="row">
+                        <p:panel id="itensVendaDataTable" styleClass="noborder">
+
+                            <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                <div class="box-header with-border" style="text-align: center;">
+                                    <h3 class="box-title" >Items #{ not empty managerPesquisarVenda.resultados ? '('.concat(managerPesquisarVenda.resultados.size()).concat(')') : ''}</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Status</th>
+                                                    <th>Código</th>
+                                                    <th>Dt. Venda</th>
+                                                    <th>Cliente</th>
+                                                    <th>Valor</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat value="#{ managerPesquisarVenda.resultados }" var="item">
+                                                    <tr>
+                                                        <td>
+                                                            <p:button title="visualizar" icon="ui-icon-search" outcome="#{item.aberta ? 'frenteCaixa' : 'visualizarVenda'}.xhtml?id=#{item.id}"/>
+                                                        </td>
+                                                        <td>#{item.statusVenda.feminino()}</td>
+                                                        <td>#{item.codigo}</td>
+                                                        <td><h:outputText value="#{ item.dataFechamento}" >
+                                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt"/>
+                                                            </h:outputText></td>
+                                                        <td>#{ item.cliente.nome}</td>
+                                                        <td>
+                                                            <h:outputText value="#{ item.valorTotal }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <p:outputLabel value="Nenhuma venda localizada" rendered="#{empty managerPesquisarVenda.entidade}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>
+                </p:fieldset>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

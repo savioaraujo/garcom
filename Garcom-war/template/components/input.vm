@@ -1,0 +1,7 @@
+				<div class="row">
+				    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				        <p:outputLabel value="$fieldNameUpper" for="${fieldNameLower}InputText" />
+				        <p:inputText id="${fieldNameLower}InputText" value="#{ manager${operation}${entityNameUpper}.entidade.${fieldNameLower} }"
+				                            required="$required" requiredMessage="$fieldNameUpper é obrigatório" />
+				    </div>
+				</div>

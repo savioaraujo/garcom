@@ -1,0 +1,106 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="titulo">
+            Visualizar #{managerCriarMovimentacaoEstoque.entidade.tipoMovimentacaoEstoque.nome} Estoque
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#estoqueMenu').addClass('active');
+            </script>
+
+            <h:form id="visualizarMovimentacaoEstoqueForm" >
+                <p:growl id="visualizarMovimentacaoEstoqueGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+
+                        <p:button value="Cadastrar" outcome="criarMovimentacaoEstoque.xhtml" icon="ui-icon-plus"
+                                  style="float:left;"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:button value="Pesquisar" outcome="pesquisarMovimentacaoEstoque.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear">
+                            <p:menuitem value="Editar" icon="ui-icon-pencil" outcome="criarMovimentacaoEstoque.xhtml">
+                                <f:param name="id" value="#{ managerPesquisarMovimentacaoEstoque.entidade.id}"/>
+                            </p:menuitem>
+                            <p:menuitem value="Excluir" icon="ui-icon-trash" oncomplete="deletarDialog.show();" rendered="#{managerPesquisarMovimentacaoEstoque.verifyPermission('DELETE')}"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Data Movimentação:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarMovimentacaoEstoque.entidade.dataMovimentacao }" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="pt"/>
+                            </p:outputLabel>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Documento Movimentação:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarMovimentacaoEstoque.entidade.documentoMovimentacao }" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Descrição:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarMovimentacaoEstoque.entidade.descricao }" />
+                        </div>
+                    </div>
+
+                </p:fieldset>
+
+                <p:fieldset id="itemsMovimentacaoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Itens Movimentação
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <p:dataTable id="itensDataTable" var="item" value="#{ managerPesquisarMovimentacaoEstoque.entidade.itensMovimentacao }"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="{currentPage} de {totalPages}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum item adicionado">
+
+                                <f:facet name="header" >
+                                    <p:outputLabel value="Items #{managerPesquisarMovimentacaoEstoque.entidade.itensMovimentacao.size() > 0 ? '('.concat(managerPesquisarMovimentacaoEstoque.entidade.itensMovimentacao.size()).concat(')'): ''}" />
+                                </f:facet>
+                                <p:column headerText="Produto" >
+                                    <h:outputText value="#{ item.produto.descricao}"/>
+                                </p:column>
+                                <p:column headerText="Quantidade" >
+                                    <h:outputText value="#{ item.quantidade}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </p:fieldset>
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check" actionListener="#{ managerPesquisarMovimentacaoEstoque.delete() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>   
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

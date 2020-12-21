@@ -1,0 +1,112 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="titulo">
+            Movimentação de Estoque
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#estoqueMenu').addClass('active');
+            </script>
+
+            <h:form id="pesquisarMovimentacaoEstoqueForm" >
+                <p:growl id="criarMovimentacaoEstoqueGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Cadastrar" outcome="criarMovimentacaoEstoque.xhtml" icon="ui-icon-plus"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Data Inicio" for="dataInicioMovimentacaoCalendar" />
+                            <p:calendar id="dataInicioMovimentacaoCalendar" value="#{ managerPesquisarMovimentacaoEstoque.dataInicio}"
+                                        showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  >
+                                <p:ajax listener="#{managerPesquisarMovimentacaoEstoque.validarPeriodo()}" 
+                                        event="blur"
+                                        process="@this"
+                                        update="@this, :pesquisarMovimentacaoEstoqueForm:dataFinalMovimentacaoCalendar"/>
+                            </p:calendar>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Data Fim" for="dataFinalMovimentacaoCalendar" />
+                            <p:calendar id="dataFinalMovimentacaoCalendar" value="#{ managerPesquisarMovimentacaoEstoque.dataFinal }"
+                                        disabled="#{managerPesquisarMovimentacaoEstoque.dataInicio eq null}"
+                                        showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Documento Movimentação" for="documentoMovimentacaoInputText" />
+                            <p:inputText id="documentoMovimentacaoInputText" value="#{ managerPesquisarMovimentacaoEstoque.entidade.documentoMovimentacao }"
+                                         required="false" requiredMessage="DocumentoMovimentacao é obrigatório" />
+                        </div>
+                        <div class="col-xs-6">
+                            <p:outputLabel value="Usuário" for="usuarioAutocomplete" />
+                            <p:autoComplete id="usuarioAutocomplete" value="#{ managerPesquisarMovimentacaoEstoque.entidade.usuarioMovimentacao}" scrollHeight="200"
+                                            forceSelection="true" dropdown="true" var="usuario" itemValue="#{ usuario }" 
+                                            itemLabel="#{ usuario.nome }" completeMethod="#{ managerAutocomplete.autocompleteUsuario}"
+                                            converter="conversor" minQueryLength="3" >
+
+                            </p:autoComplete>
+                        </div>
+                    </div>
+                    <div class="command col-md-12">
+                        <p:commandButton styleClass="ui-priority-primary" value="Pesquisar" icon="ui-icon-search"
+                                         process="@this, :pesquisarMovimentacaoEstoqueForm:campoFieldset"
+                                         actionListener="#{managerPesquisarMovimentacaoEstoque.pesquisar()}" update="@this, :pesquisarMovimentacaoEstoqueForm:resultadosFieldset"/>
+                    </div>                    
+                </p:fieldset>
+                <p:fieldset id="resultadosFieldset" >
+                    <h3 class="tituloFieldset">
+                        Resultados
+                    </h3>
+                    <p:dataTable id="idiomasDataTable" var="movimentacaoEstoque" value="#{ managerPesquisarMovimentacaoEstoque.resultados }"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="{currentPage} de {totalPages}"
+                                 rowsPerPageTemplate="5,10,15"
+                                 rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                        <f:facet name="header" >
+                            <p:outputLabel value="MovimentacaoEstoques #{managerPesquisarMovimentacaoEstoque.resultados.size() > 0 ? '('.concat(managerPesquisarMovimentacaoEstoque.resultados.size()).concat(')'): ''}" />
+                        </f:facet>
+
+                        <p:column headerText="Opções" width="10%" styleClass="options3">
+                            <p:button title="visualizar" icon="ui-icon-search" outcome="visualizarMovimentacaoEstoque.xhtml?id=#{movimentacaoEstoque.id}"/>
+                        </p:column>  
+                        <p:column headerText="DataMovimentacao" >
+                            <h:outputText value="#{ movimentacaoEstoque.dataMovimentacao }">
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="pt"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Documento Movimentação" >
+                            <h:outputText value="#{ movimentacaoEstoque.documentoMovimentacao }"/>
+                        </p:column>
+                        <p:column headerText="Descrição" >
+                            <h:outputText value="#{ movimentacaoEstoque.descricao }"/>
+                        </p:column>
+                        
+                        <p:column headerText="Usuário cadastro" >
+                            <h:outputText value="#{ movimentacaoEstoque.usuarioMovimentacao.nome}"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

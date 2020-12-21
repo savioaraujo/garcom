@@ -1,0 +1,85 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Pesquisar Tipo de Movimentação da Carteira da Loja
+        </ui:define>
+
+        <ui:define name="titulo">
+            Pesquisar Tipo de Movimentação da Carteira da Loja
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="pesquisarTipoMovimentacaoCarteiraLojaForm" >
+                <p:growl id="criarTipoMovimentacaoCarteiraLojaGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Cadastrar" outcome="criarTipoMovimentacaoCarteiraLoja.xhtml" icon="ui-icon-plus"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Descrição" for="descricaoInputText" />
+                            <p:inputText id="descricaoInputText" value="#{ managerPesquisarTipoMovimentacaoCarteiraLoja.entidade.descricao }"
+                                         required="false" requiredMessage="Descrição é obrigatório" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Tipo" for="tipoSelectOneMenu" />
+
+                            <p:selectOneMenu id="tipoSelectOneMenu" value="#{ managerPesquisarTipoMovimentacaoCarteiraLoja.entidade.tipo}"
+                                             required="false" requiredMessage="Tipo é obrigatório">
+                                <f:selectItem itemValue="#{null}" itemLabel="Todas"/>
+                                <f:selectItems value="#{ enums.tipoMovimentacaos() }" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="command col-md-12">
+                        <p:commandButton styleClass="ui-priority-primary" value="Pesquisar" icon="ui-icon-search"
+                                         actionListener="#{managerPesquisarTipoMovimentacaoCarteiraLoja.pesquisar()}" update="pesquisarTipoMovimentacaoCarteiraLojaForm:resultadosFieldset"/>
+                    </div>
+                    <p:fieldset id="resultadosFieldset" legend="Resultados" >
+
+                        <p:dataTable id="idiomasDataTable" var="tipoMovimentacaoCarteiraLoja" value="#{ managerPesquisarTipoMovimentacaoCarteiraLoja.resultados }"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="{currentPage} de {totalPages}"
+                                     rowsPerPageTemplate="5,10,15"
+                                     rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                            <f:facet name="header" >
+                                <p:outputLabel value="Tipos de movimentação #{managerPesquisarTipoMovimentacaoCarteiraLoja.resultados.size() > 0 ? '('.concat(managerPesquisarTipoMovimentacaoCarteiraLoja.resultados.size()).concat(')'): ''}" />
+                            </f:facet>
+
+                            <p:column headerText="Opções" width="10%" styleClass="options3">
+                                <p:button title="visualizar" icon="ui-icon-search" outcome="visualizarTipoMovimentacaoCarteiraLoja.xhtml?id=#{tipoMovimentacaoCarteiraLoja.id}"/>
+                            </p:column>  
+
+                            <p:column headerText="Descrição" >
+                                <h:outputText value="#{ tipoMovimentacaoCarteiraLoja.descricao }"/>
+                            </p:column>
+                            <p:column headerText="Tipo" >
+                                <h:outputText value="#{ tipoMovimentacaoCarteiraLoja.tipo.str() }"/>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:fieldset>
+
+                </p:fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

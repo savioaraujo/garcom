@@ -1,0 +1,190 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Visualizar Produto
+        </ui:define>
+
+        <ui:define name="titulo">
+            Visualizar Produto
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="visualizarProdutoForm" >
+                <p:growl id="visualizarProdutoGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarProduto.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear">
+                            <p:menuitem value="Editar" icon="ui-icon-pencil" outcome="criarProduto.xhtml">
+                                <f:param name="id" value="#{ managerPesquisarProduto.entidade.id}"/>
+                            </p:menuitem>
+                            <p:menuitem value="Excluir" icon="ui-icon-trash" oncomplete="deletarDialog.show();"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">Dados</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Disponivel:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.disponivel ? 'Sim' : 'Não'}" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Codigo:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.codigo }" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Descrição:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.descricao }" />
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Valor:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.valor }" >
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Valor Minimo:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.valorMinimo }" >
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Estoque Atual:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.estoque }" >
+                                <f:convertNumber type="number" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Estoque Minimo:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.estoqueMinimo }" >
+                                <f:convertNumber type="number" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                    </div>
+                </p:fieldset>
+
+                <p:fieldset id="aditivoFieldset" >
+                    <h3 class="tituloFieldset">Informações aditivo</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel styleClass="bold-label" value="Este produto"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.utilizacaoAditivo.descricao}" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" style="#{managerPesquisarProduto.entidade.utilizacaoAditivo eq 'EH_UM_ADITIVO_RETORNAVEL' ? '' : 'display:none'}">
+                            <p:outputLabel styleClass="bold-label" value="Será pago no ato da venda ?" />
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.pagamentoNoAtoDaVenda  ? 'Sim' : 'Não'}" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" style="#{not managerPesquisarProduto.entidade.pagamentoNoAtoDaVenda and managerPesquisarProduto.entidade.utilizacaoAditivo eq 'EH_UM_ADITIVO_RETORNAVEL' ? '' : 'display:none'}">
+                            <p:outputLabel  styleClass="bold-label"  value="Prazo para entrega (Dias)" />
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.entidade.prazoDevolucao }" >
+                                <f:convertNumber type="number" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7" style="#{managerPesquisarProduto.entidade.utilizacaoAditivo eq 'UTILIZA_UM_ADITIVO'? '' : 'display:none'}">
+                            <p:outputLabel styleClass="bold-label" value="Produto Aditivo" />
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.itemAditivoProduto.produto.descricao }" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-1 col-lg-1" style="#{managerPesquisarProduto.entidade.utilizacaoAditivo eq 'UTILIZA_UM_ADITIVO'? '' : 'display:none'}">
+                            <p:outputLabel styleClass="bold-label" value="Quantidade"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarProduto.itemAditivoProduto.quantidade}" >
+                                <f:convertNumber type="number" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                    </div>
+                </p:fieldset >
+
+                <p:fieldset id="movimentacoesFieldset" rendered="#{not empty managerPesquisarProduto.ultimasMovimentacoes}" >
+                    <h3 class="tituloFieldset">Últimas movimentações</h3>
+                    <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                         -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                         box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                        <div class="box-header with-border" style="text-align: center;">
+                            <h3 class="box-title" >Items #{ not empty managerPesquisarProduto.ultimasMovimentacoes ? '('.concat(managerPesquisarProduto.ultimasMovimentacoes.size()).concat(')') : ''}</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="table-responsive">
+                                <table class="table no-margin">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Data</th>
+                                            <th>Tipo</th>
+                                            <th>Descriçao</th>
+                                            <th>usuário</th>
+                                            <th>Estoque anterior</th>
+                                            <th>Qtd.  movimentada</th>
+                                            <th>Estoque pos movimentaçao</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ui:repeat value="#{ managerPesquisarProduto.ultimasMovimentacoes }" var="item">
+                                            <tr>
+                                                <td>
+                                                    <p:button  title="visualizar venda"  icon="ui-icon-search" rendered="#{item.venda.codigo ne null}" outcome="#{item.venda.aberta ? 'frenteCaixa' : 'visualizarVenda'}.xhtml?id=#{item.venda.id}"  />
+                                                </td>
+                                                <td><h:outputText value="#{ item.dataMovimentacao}" >
+                                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" locale="pt"/>
+                                                    </h:outputText></td>
+                                                <td>#{ item.tipoMovimentacao.nome}</td>
+                                                <td>#{ item.descricao}</td>
+                                                <td>#{ item.usuarioMovimentacao.nome}</td>
+                                                <td>#{ item.estoqueAnterior}</td>
+                                                <td>#{ item.quantidade}</td>
+                                                <td>#{ item.estoqueAtual}</td>
+                                            </tr>
+                                        </ui:repeat>
+                                        <tr>
+                                            <td colspan="5">
+                                                <p:outputLabel value="Nenhuma venda localizada" rendered="#{empty managerPesquisarProduto.ultimasMovimentacoes}" />
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.table-responsive -->
+                        </div>
+                    </div>
+                </p:fieldset>
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check" actionListener="#{ managerPesquisarProduto.delete() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>   
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

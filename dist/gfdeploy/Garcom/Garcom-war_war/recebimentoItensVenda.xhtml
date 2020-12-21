@@ -1,0 +1,300 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="titulo">
+            Devolução itens vendas
+        </ui:define>
+
+        <ui:define name="content">
+
+            <h:form id="criarVendaForm" >
+                <p:growl id="criarProdutoGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarVenda.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Informações : <h:outputText id="codigoVendaOutputlabel" value="#{managerPesquisarVenda.entidade.tipoVenda.descricao} #{managerPesquisarVenda.entidade.codigo eq null ? ' não cadastrado' : 'Nº '.concat(managerPesquisarVenda.entidade.codigo )}" />
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
+                            <p:outputLabel value="Cliente" />
+                            <br/>
+                            <h:outputText value="#{managerPesquisarVenda.entidade.cliente.nome}" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p:panel id="itensVendaDataTable" styleClass="noborder">
+
+                            <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                <div class="box-header with-border" style="text-align: center;">
+                                    <h3 class="box-title" >Items #{ not empty managerPesquisarVenda.itensPendentesDevolucao ? '('.concat(managerPesquisarVenda.itensPendentesDevolucao.size()).concat(')') : ''}</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                                <tr>
+                                                    <th>Descrição</th>
+                                                    <th>Valor Unitário</th>
+                                                    <th>Quantidade</th>
+                                                    <th>Valor Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat value="#{ managerPesquisarVenda.itensPendentesDevolucao }" var="item">
+                                                    <tr>
+                                                        <td>#{item.produto.descricao}</td>
+                                                        <td><h:outputText value="#{ item.valorUnitario }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText></td>
+                                                        <td>
+                                                            <p:spinner min="0" max="#{ item.quantidade }" 
+                                                                       value="#{ item.quantidadeDevolvida }">
+                                                                <p:ajax event="change" process="@this" listener="#{managerPesquisarVenda.calcularValorDebito()}"
+                                                                        update="@this, :criarVendaForm:campoFieldset"/>
+                                                            </p:spinner>
+                                                        </td>
+                                                        <td>
+                                                            <h:outputText value="#{ item.valorASerPago }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <p:outputLabel value="Nenhum item adicionado" rendered="#{empty managerPesquisarVenda.entidade.itemVenda}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11" style="text-align: right">
+                            <p:outputLabel value="TOTAL:"/>
+                            <p:outputLabel id="totalVendaOutputLabel" value="#{managerPesquisarVenda.totalItensDevolucao}">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                    </div>
+                </p:fieldset>
+                <div class="command">
+                    <p:commandButton value="Finalizar" icon=" ui-icon-check" 
+                                     styleClass="ui-priority-primary" 
+                                     onclick="pagamentoDialog.show()"
+                                     process=":criarVendaForm:campoFieldset" update="@this" actionListener="#{managerPesquisarVenda.confirmarRecebimento()}"/>
+                    <p:button value="Voltar" icon=" ui-icon-arrowreturn-1-w" outcome="index.xhtml" />
+                </div>
+
+                <p:dialog id="pagamentoDialog" widgetVar="pagamentoDialog" header="Informe o pagamento para movimentar o estoque" dynamic="true"
+                          closable="false"
+                          modal="true" appendTo="@this" resizable="false" width="100%" height="500px" draggable="false">
+                    <p:ajax event="close" listener="#{managerPesquisarVenda.removerParcelas()}"/>
+                    <p:fieldset id="campoFieldsetPagamento" >
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <p:outputLabel value="Forma de Pagamento" for="formaPagamentoSelectOneMenu" />
+                                <p:selectOneMenu id="formaPagamentoSelectOneMenu" value="#{ managerPesquisarVenda.itemPagamento.formaPagamento }"
+                                                 required="false" requiredMessage="Forma de Pagamento é obrigatório para adicionar um pagamento">
+                                    <f:selectItems value="#{ enums.formasDePagamento(managerPesquisarVenda.entidade.cliente) }" />
+                                    <p:ajax event="change" 
+                                            update=":criarVendaForm:valorPagamentoText
+                                            :criarVendaForm:panelMaquina" 
+                                            process="@this"
+                                            listener="#{managerPesquisarVenda.setarValorRestante()}"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <p:outputLabel value="Valor" for="valorPagamentoText" />
+                                <p:inputText id="valorPagamentoText" value="#{ managerPesquisarVenda.itemPagamento.valor }"
+                                             required="true" requiredMessage="Valor é obrigatório" onkeypress="$(this).autoNumeric({aSign:'R$ ', aSep: '.', aDec: ','} );">
+                                    <f:convertNumber type="currency" locale="pt-BR"  />
+                                </p:inputText>
+                            </div>
+                        </div>
+                        <p:panel id="panelMaquina" style="border:none;#{managerPesquisarVenda.itemPagamento.formaPagamento eq 'CARTAO_CREDITO' or managerPesquisarVenda.itemPagamento.formaPagamento eq 'CARTAO_DEBITO' ? '' : 'display:none;'}" >
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <p:outputLabel value="Máquina" for="maquinaSelectOneMenu" />
+
+                                <p:autoComplete id="maquinaSelectOneMenu" 
+                                                value="#{ managerPesquisarVenda.itemPagamento.maquinaCartao }"
+                                                scrollHeight="200"
+                                                converter="conversor" forceSelection="true" 
+                                                var="maquina" itemValue="#{ maquina }" itemLabel="#{maquina.nome}"
+                                                panelStyleClass="autocomplete_dialog"
+                                                emptyMessage="Nenhuma máquina encontrado para esta forma de pagamento"
+                                                dropdown="true" minQueryLength="1" completeMethod="#{managerPesquisarVenda.maquinasDisponiveis}">
+                                    <p:ajax event="itemSelect"  process="@this" update=":criarVendaForm:bandeiraSelectOneMenu
+                                            :criarVendaForm:parcelamentoSelectOneMenu2"/>
+                                    <p:ajax event="blur"  process="@this" update=":criarVendaForm:bandeiraSelectOneMenu
+                                            :criarVendaForm:parcelamentoSelectOneMenu2"/>
+                                </p:autoComplete>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                <p:outputLabel value="Bandeira" for="bandeiraSelectOneMenu" />
+                                <p:selectOneMenu id="bandeiraSelectOneMenu" value="#{ managerPesquisarVenda.itemPagamento.bandeiraCartao }"
+                                                 converter="conversor">
+                                    <f:selectItems value="#{ managerPesquisarVenda.bandeiraDisponiveis() }" />
+                                    <p:ajax event="change"  process="@this" update=":criarVendaForm:parcelamentoSelectOneMenu2"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                <p:outputLabel value="Parcelamento" for="parcelamentoSelectOneMenu2" />
+                                <p:selectOneMenu id="parcelamentoSelectOneMenu2" value="#{managerPesquisarVenda.itemPagamento.itemJuros}"
+                                                 converter="conversor">
+                                    <f:selectItems value="#{ managerPesquisarVenda.parcelamentoDisponiveis() }" var="item" itemValue="#{item}" itemLabel="X #{item.parcelamento}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </p:panel>
+                        <div class="command">
+                            <p:commandButton styleClass="ui-priority-primary" value="Adicionar" icon="ui-icon-disk" 
+                                             style="padding-bottom:0px!important;"
+                                             process="@this
+                                             :criarVendaForm:formaPagamentoSelectOneMenu
+                                             :criarVendaForm:valorPagamentoText
+                                             :criarVendaForm:itensPagamento
+                                             :criarVendaForm:panelMaquina"
+                                             update="@this
+                                             :criarVendaForm:finalizarVendaButton
+                                             
+                                             :criarVendaForm:codigoVendaOutputlabel
+                                             :criarVendaForm:formaPagamentoSelectOneMenu
+                                             :criarVendaForm:valorPagamentoText
+                                             :criarVendaForm:itensPagamento
+                                             :criarVendaForm:panelMaquina
+                                             :criarVendaForm:criarProdutoGrowl"
+                                             actionListener="#{managerPesquisarVenda.adicionarItemPagamento()}"/>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding: 0px">
+
+                                <p:panel id="itensPagamento" styleClass="noborder" style="padding:0px!important">
+
+                                    <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                         -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                         box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                        <div class="box-header with-border" style="text-align: center;">
+                                            <h3 class="box-title" >Items</h3>
+                                        </div>
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                            <div class="table-responsive">
+                                                <table class="table no-margin">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Forma pg.</th>
+                                                            <th>Valor</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <ui:repeat value="#{ managerPesquisarVenda.itensPagamentos }" var="item">
+                                                            <tr>
+                                                                <td>
+                                                                    <p:commandButton title="Remover item"
+                                                                                     actionListener="#{managerPesquisarVenda.removerParcela(item)}"
+                                                                                     process="@this"
+                                                                                     update="@this
+                                                                                     :criarVendaForm:finalizarVendaButton
+                                                                                     
+                                                                                     :criarVendaForm:codigoVendaOutputlabel
+                                                                                     :criarVendaForm:campoFieldsetPagamento
+                                                                                     :criarVendaForm:itensPagamento"
+                                                                                     icon="ui-icon-trash">
+                                                                    </p:commandButton>
+                                                                </td>
+                                                                <td>#{item.formaPagamento.nome }</td>
+                                                                <td><h:outputText value="#{ item.valor }" >
+                                                                        <f:convertNumber type="currency" locale="pt-BR"  />
+                                                                    </h:outputText></td>
+                                                            </tr>
+                                                        </ui:repeat>
+                                                        <tr>
+                                                            <td colspan="5">
+                                                                <p:outputLabel value="Nenhum item adicionado" rendered="#{empty managerPesquisarVenda.itensPagamentos}" />
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- /.table-responsive -->
+                                            <div class="box-footer clearfix">
+
+                                                <div class="row">
+
+                                                    <div class="col-md-12">
+                                                        <h:outputLabel value="Total Venda : "/>
+                                                        <h:outputLabel value="#{managerPesquisarVenda.totalItensDevolucao}">
+                                                            <f:convertNumber type="currency" locale="pt-BR"  />
+                                                        </h:outputLabel>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <h:outputLabel value="Total Pago: " />
+                                                        <h:outputLabel value="#{managerPesquisarVenda.totalParcelas()}">
+                                                            <f:convertNumber type="currency" locale="pt-BR"  />
+                                                        </h:outputLabel>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+
+                                                    <div class="col-md-12">
+                                                        <h:outputLabel value="Restante : "/>
+                                                        <h:outputLabel value="#{managerPesquisarVenda.totalItensDevolucao.subtract(managerPesquisarVenda.totalParcelas())}">
+                                                            <f:convertNumber type="currency" locale="pt-BR"  />
+                                                        </h:outputLabel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:panel>
+
+                            </div>
+                        </div>
+                        <div class="command" style="margin-top:0px!important;">
+                            <p:commandButton styleClass="ui-priority-primary" value="Confirmar" icon="ui-icon-check" 
+                                             id="finalizarVendaButton"
+                                             disabled="#{managerPesquisarVenda.totalItensDevolucao.subtract(managerPesquisarVenda.totalParcelas()) gt 0 }"
+                                             process="@this, :criarVendaForm:campoFieldsetPagamento"
+                                             update="@this, :criarVendaForm:campoFieldsetPagamento"
+                                             actionListener="#{managerPesquisarVenda.confirmarRecebimento()}"/>
+                            <p:commandButton process="@this" 
+                                             update="@this, :criarVendaForm:itensPagamento, :criarVendaForm:campoFieldsetPagamento"
+                                             actionListener="#{managerPesquisarVenda.removerParcelas()}"
+                                             value="Cancelar"
+                                             icon="ui-icon-close"  />
+                        </div>
+                    </p:fieldset>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

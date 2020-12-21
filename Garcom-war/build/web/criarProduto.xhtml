@@ -1,0 +1,161 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="title">
+            Cadastro de Produto
+        </ui:define>
+        <ui:define name="titulo">
+            Cadastro de Produto
+        </ui:define>
+        <ui:define name="content">
+            <script type='text/javascript' src='media/js/validateNumberOnly.js'></script>
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="criarProdutoForm" >
+                <p:growl id="criarProdutoGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarProduto.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">Dados</h3>
+                    <div class="row">
+
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <p:outputLabel value="Disponível ?" for="disponivelcheckBooleanButton" styleClass="bold-label"/>
+                            <p:selectBooleanButton id="disponivelcheckBooleanButton" 
+                                                   value="#{ managerCriarProduto.entidade.disponivel  }"
+                                                   onLabel="Sim" offLabel="Não">
+                            </p:selectBooleanButton>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3" style="display: none;">
+                            <p:outputLabel value="Permitir Anotações ?" for="permitirAnotacoesCheckBooleanButton" styleClass="bold-label"/>
+                            <p:selectBooleanButton id="permitirAnotacoesCheckBooleanButton" 
+                                                   value="#{ managerCriarProduto.entidade.permitirEscreverObservacoes}"
+                                                   onLabel="Sim" offLabel="Não">
+                            </p:selectBooleanButton>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Código" for="codigoInputText" />
+                            <p:inputText id="codigoInputText" value="#{ managerCriarProduto.entidade.codigo }"
+                                         required="false" requiredMessage="Codigo é obrigatório" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Descrição" for="descricaoInputText" />
+                            <p:inputText id="descricaoInputText" value="#{ managerCriarProduto.entidade.descricao }"
+                                         required="true" requiredMessage="Descricao é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Valor Unitario" for="valorInputText" />
+                            <p:inputText id="valorInputText" value="#{ managerCriarProduto.entidade.valor }"
+                                         required="true" requiredMessage="Valor é obrigatório" 
+                                         onkeypress="$(this).autoNumeric({aSign:'R$ ', aSep: '.', aDec: ','} );">
+                                <f:convertNumber type="currency" locale="pt-BR"  /> 
+                                <p:ajax event="blur" listener="#{managerCriarProduto.validarValorMinimo()}" process="@this" update="valorMinimoInputText"/>
+                            </p:inputText>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Valor Minimo" for="valorMinimoInputText" />
+                            <p:inputText id="valorMinimoInputText" value="#{ managerCriarProduto.entidade.valorMinimo }"
+                                         required="true" requiredMessage="Valor Minimo é obrigatório" 
+                                         onkeypress="$(this).autoNumeric({aSign:'R$ ', aSep: '.', aDec: ','} );">
+                                <p:ajax event="blur" listener="#{managerCriarProduto.validarValorMinimo()}" process="@this" update="valorInputText"/>
+                                <f:convertNumber type="currency" locale="pt-BR"  /> 
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="#{managerCriarProduto.entidade.id eq null ? '' : 'display:none'}">
+                            <p:outputLabel value="Estoque Atual" for="estoqueInputText" rendered="#{managerCriarProduto.entidade.id eq null}"/>
+                            <p:inputText id="estoqueInputText" value="#{ managerCriarProduto.entidade.estoque }"
+                                         rendered="#{managerCriarProduto.entidade.id eq null}"
+                                         required="true" requiredMessage="Estoque Atual é obrigatório" 
+                                         onkeydown="$(this).validateNumberOnly();">
+                                <f:convertNumber type="number" /> 
+                            </p:inputText>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Estoque Minimo" for="estoqueMinimoInputText"/>
+                            <p:inputText id="estoqueMinimoInputText" value="#{ managerCriarProduto.entidade.estoqueMinimo }"
+                                         onkeydown="$(this).validateNumberOnly();">
+                                <f:convertNumber type="number" /> 
+                            </p:inputText>
+                        </div>
+                    </div>
+                </p:fieldset >
+
+                <p:fieldset id="aditivoFieldset" >
+                    <h3 class="tituloFieldset">Informações aditivo</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Este produto" for="tipoAditivoProdutoSelectOneMenu" styleClass="bold-label"/>
+                            <p:selectOneMenu id="tipoAditivoProdutoSelectOneMenu" value="#{ managerCriarProduto.entidade.utilizacaoAditivo}">
+                                <f:selectItem  itemLabel="Não figura um aditivo" itemValue="#{ null }"/>
+                                <f:selectItems value="#{ enums.utilizacaoAditivo() }"/>
+                                <p:ajax process="@this" update=":criarProdutoForm:aditivoFieldset" event="change"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" style="#{managerCriarProduto.entidade.utilizacaoAditivo eq 'EH_UM_ADITIVO_RETORNAVEL' ? '' : 'display:none'}" >
+                            <p:outputLabel value="Será pago no ato da venda ?" for="pagamentoNoAtoDaVendaCheckBooleanButton" styleClass="bold-label"/>
+                            <p:selectBooleanButton id="pagamentoNoAtoDaVendaCheckBooleanButton" 
+                                                   value="#{ managerCriarProduto.entidade.pagamentoNoAtoDaVenda}"
+                                                   onLabel="Sim" offLabel="Não">
+                                <p:ajax process="@this" update=":criarProdutoForm:aditivoFieldset" event="change"/>
+                            </p:selectBooleanButton>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" style="#{not managerCriarProduto.entidade.pagamentoNoAtoDaVenda and managerCriarProduto.entidade.utilizacaoAditivo eq 'EH_UM_ADITIVO_RETORNAVEL' ? '' : 'display:none'}">
+                            <p:outputLabel value="Prazo para entrega (Dias)" for="prazoInputText" rendered="#{not managerCriarProduto.entidade.pagamentoNoAtoDaVenda and managerCriarProduto.entidade.utilizacaoAditivo eq 'EH_UM_ADITIVO_RETORNAVEL' }"/>
+                            <p:inputText id="prazoInputText" value="#{ managerCriarProduto.entidade.prazoDevolucao }"
+                                         rendered="#{not managerCriarProduto.entidade.pagamentoNoAtoDaVenda and managerCriarProduto.entidade.utilizacaoAditivo eq 'EH_UM_ADITIVO_RETORNAVEL' }"
+                                         required="true" requiredMessage="Prazo para entrega é obrigatório" 
+                                         onkeydown="$(this).validateNumberOnly();">
+                                <f:convertNumber type="number" /> 
+                            </p:inputText>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7" style="#{managerCriarProduto.entidade.utilizacaoAditivo eq 'UTILIZA_UM_ADITIVO'? '' : 'display:none'}">
+                            <p:outputLabel value="Produto Aditivo" for="produtoAditivoAutoComplete" rendered="#{managerCriarProduto.entidade.utilizacaoAditivo eq 'UTILIZA_UM_ADITIVO'}"/>
+                            <p:autoComplete id="produtoAditivoAutoComplete" value="#{ managerCriarProduto.itemAditivoProduto.produto}" scrollHeight="200"
+                                            rendered="#{managerCriarProduto.entidade.utilizacaoAditivo eq 'UTILIZA_UM_ADITIVO'}"
+                                            forceSelection="true" dropdown="true" var="produto" itemValue="#{ produto }" 
+                                            itemLabel="#{ produto.codigo ne null ? produto.codigo.concat(' - ') : ''}#{produto.descricao}" completeMethod="#{ managerAutocomplete.autocompleteProdutoAditivo}"
+                                            converter="conversor_produto" minQueryLength="3" >
+                            </p:autoComplete>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-1 col-lg-1" style="#{managerCriarProduto.entidade.utilizacaoAditivo eq 'UTILIZA_UM_ADITIVO'? '' : 'display:none'}">
+                            <p:outputLabel value="Quantidade" for="quantidadeAditivoInputText" rendered="#{managerCriarProduto.entidade.utilizacaoAditivo eq 'UTILIZA_UM_ADITIVO'}"/>
+                            <p:inputText id="quantidadeAditivoInputText" value="#{ managerCriarProduto.itemAditivoProduto.quantidade }"
+                                         rendered="#{managerCriarProduto.entidade.utilizacaoAditivo eq 'UTILIZA_UM_ADITIVO'}"
+                                         required="true" requiredMessage="Quantidade aditivo é obrigatório" 
+                                         onkeydown="$(this).validateNumberOnly();">
+                            </p:inputText>
+                        </div>
+                    </div>
+                </p:fieldset >
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" 
+                                     actionListener="#{managerCriarProduto.salvar()}" 
+                                     update=":criarProdutoForm:campoFieldset
+                                     :criarProdutoForm:aditivoFieldset"/>
+                    <p:button rendered="#{managerCriarProduto.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarProduto.xhtml" />
+                    <p:button rendered="#{managerCriarProduto.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarProduto.xhtml?id=#{managerCriarProduto.entidade.id}" />
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

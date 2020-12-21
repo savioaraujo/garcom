@@ -1,0 +1,148 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="titulo">
+            Cadastro de #{managerCriarMovimentacaoEstoque.tipoMovimentacaoEstoque.nome} de Estoque
+        </ui:define>
+
+        <ui:define name="content">
+
+            <script>
+                $('#estoqueMenu').addClass('active');
+            </script>
+            <h:form id="criarMovimentacaoEstoqueForm" >
+                <p:growl id="criarMovimentacaoEstoqueGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarMovimentacaoEstoque.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Data Movimentação" for="dataMovimentacaoSelectOneMenu" />
+                            <p:calendar id="dataMovimentacaoSelectOneMenu" value="#{ managerCriarMovimentacaoEstoque.entidade.dataMovimentacao }"
+                                        showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  
+                                        required="true" requiredMessage="Data Movimentação é obrigatório" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Documento Movimentação" for="documentoMovimentacaoInputText" />
+                            <p:inputText id="documentoMovimentacaoInputText" value="#{ managerCriarMovimentacaoEstoque.entidade.documentoMovimentacao }"
+                                         required="false" requiredMessage="Documento Movimentação é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p:outputLabel value="Descrição" for="descricaoInputText" />
+                            <p:inputTextarea id="descricaoInputText" value="#{ managerCriarMovimentacaoEstoque.entidade.descricao }"
+                                             required="false" requiredMessage="Descrição é obrigatório" />
+                        </div>
+                    </div>
+                </p:fieldset >
+                <p:fieldset id="itemsMovimentacaoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Itens Movimentação
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Produto" for="moduloAutocomplete" />
+                            <p:autoComplete id="moduloAutocomplete" value="#{ managerCriarMovimentacaoEstoque.itemMovimentacaoEstoque.produto }" scrollHeight="200"
+                                            forceSelection="true" dropdown="true" var="produto" itemValue="#{ produto }" 
+                                            required="true" requiredMessage="Produto é obrigatório" 
+                                            itemLabel="#{ produto.codigo ne null and produto.codigo ne '' ? produto.codigo.concat(' - ') : ''}#{produto.descricao}" completeMethod="#{ managerAutocomplete.autocompleteProduto}"
+                                            converter="conversor_produto" minQueryLength="3" >
+                            </p:autoComplete>
+                            
+                        </div>
+                        
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Quantidade" for="quantidadeInputText"/>
+                            <p:inputText id="quantidadeInputText" value="#{ managerCriarMovimentacaoEstoque.itemMovimentacaoEstoque.quantidade}"
+                                         required="true" requiredMessage="Quantidade aditivio é obrigatório" 
+                                         onkeydown="$(this).validateNumberOnly();">
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary" value="Adicionar" icon="ui-icon-plus" 
+                                         actionListener="#{managerCriarMovimentacaoEstoque.adicionarItem()}" 
+                                         process="@this, 
+                                         :criarMovimentacaoEstoqueForm:itemsMovimentacaoFieldset"
+                                         update="@this, 
+                                         :criarMovimentacaoEstoqueForm:itemsMovimentacaoFieldset"/>
+                        <p:commandButton value="Cancelar" icon="ui-icon-close"
+                                         actionListener="#{managerCriarMovimentacaoEstoque.instanciarItemMovimentacao()}" 
+                                         process="@this"
+                                         update="@this, 
+                                         :criarMovimentacaoEstoqueForm:itemsMovimentacaoFieldset" />
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <p:dataTable id="itensDataTable" var="item" value="#{ managerCriarMovimentacaoEstoque.entidade.itensMovimentacao }"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="{currentPage} de {totalPages}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum item adicionado">
+
+                                <f:facet name="header" >
+                                    <p:outputLabel value="Items #{managerCriarMovimentacaoEstoque.entidade.itensMovimentacao.size() > 0 ? '('.concat(managerCriarMovimentacaoEstoque.entidade.itensMovimentacao.size()).concat(')'): ''}" />
+                                </f:facet>
+
+                                <p:column headerText="Opções" width="10%" styleClass="options3">
+                                    <p:commandButton title="Remover telefone" icon="ui-icon-trash" 
+                                                     disabled="#{managerCriarMovimentacaoEstoque.itemMovimentacaoEstoque eq item}"
+                                                     onclick="removerItemDialog.show()" process="@this" update="@this" >
+                                        <f:setPropertyActionListener target="#{managerCriarMovimentacaoEstoque.itemMovimentacaoEstoqueRemocao}" value="#{item}" />
+                                    </p:commandButton>
+                                </p:column>  
+
+                                <p:column headerText="Produto" >
+                                    <h:outputText value="#{ item.produto.descricao}"/>
+                                </p:column>
+                                <p:column headerText="Quantidade" >
+                                    <h:outputText value="#{ item.quantidade}"/>
+                                </p:column>
+                                <p:column headerText="Estimativa" >
+                                    <h:outputText value="#{ managerCriarMovimentacaoEstoque.tipoMovimentacaoEstoque eq 'SAIDA' ? item.produto.estoque - item.quantidade : item.produto.estoque + item.quantidade}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </p:fieldset>
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk"
+                                     update="@this, :criarMovimentacaoEstoqueForm:campoFieldset"
+                                     process="@this, :criarMovimentacaoEstoqueForm:campoFieldset"
+                                     actionListener="#{managerCriarMovimentacaoEstoque.salvar()}" />
+                    <p:button rendered="#{managerCriarMovimentacaoEstoque.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarMovimentacaoEstoque.xhtml" />
+                    <p:button rendered="#{managerCriarMovimentacaoEstoque.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarMovimentacaoEstoque.xhtml?id=#{managerCriarMovimentacaoEstoque.entidade.id}" />
+                </div>
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="removerItemDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check"
+                                             process="@this"
+                                             update="@this, 
+                                             itensDataTable"
+                                             oncomplete="removerItemDialog.hide()"
+                                             actionListener="#{ managerCriarMovimentacaoEstoque.removerItem() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="removerItemDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

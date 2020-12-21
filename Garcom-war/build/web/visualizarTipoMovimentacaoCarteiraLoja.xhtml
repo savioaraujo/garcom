@@ -1,0 +1,66 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Visualizar Tipo de Movimentação da Carteira da Loja
+        </ui:define>
+        <ui:define name="titulo">
+            Visualizar Tipo de Movimentação da Carteira da Loja
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="visualizarTipoMovimentacaoCarteiraLojaForm" >
+                <p:growl id="visualizarTipoMovimentacaoCarteiraLojaGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarTipoMovimentacaoCarteiraLoja.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear">
+                            <p:menuitem value="Editar" icon="ui-icon-pencil" outcome="criarTipoMovimentacaoCarteiraLoja.xhtml">
+                                <f:param name="id" value="#{ managerPesquisarTipoMovimentacaoCarteiraLoja.entidade.id}"/>
+                            </p:menuitem>
+                            <p:menuitem value="Excluir" icon="ui-icon-trash" oncomplete="deletarDialog.show();"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Descrição:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarTipoMovimentacaoCarteiraLoja.entidade.descricao }" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Tipo:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarTipoMovimentacaoCarteiraLoja.entidade.tipo.str() }" />
+                        </div>
+                    </div>
+
+                </p:fieldset>
+
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check" actionListener="#{ managerPesquisarTipoMovimentacaoCarteiraLoja.delete() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>   
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

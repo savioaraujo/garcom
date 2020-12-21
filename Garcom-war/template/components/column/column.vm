@@ -1,0 +1,3 @@
+                            <p:column headerText="${fieldName}" >
+                                <h:outputText value="#{ ${entityNameLower}.${fieldNameLower} }"/>
+                            </p:column>

@@ -1,0 +1,154 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="titulo">
+            Cadastro de Maquina Cartão
+        </ui:define>
+
+        <ui:define name="content">
+
+            <script type='text/javascript' src='media/js/validateNumberOnly.js'></script>
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="criarMaquinaCartaoForm" >
+                <p:growl id="criarMaquinaCartaoGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarMaquinaCartao.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Nome" for="nomeInputText" />
+                            <p:inputText id="nomeInputText" value="#{ managerCriarMaquinaCartao.entidade.nome }"
+                                         required="false" requiredMessage="Nome é obrigatório" />
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+                            <p:outputLabel styleClass="bold-label" value="Crédito ?" for="creditoCheckBooleanButton" />
+                            <p:selectBooleanButton id="creditoCheckBooleanButton"
+                                                   value="#{ managerCriarMaquinaCartao.entidade.credito }"
+                                                   onLabel="Sim" offLabel="Não">
+                            </p:selectBooleanButton>
+                        </div>
+
+                        <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+                            <p:outputLabel styleClass="bold-label" value="Débito ?" for="debitoCheckBooleanButton" />
+                            <p:selectBooleanButton id="debitoCheckBooleanButton"
+                                                   value="#{ managerCriarMaquinaCartao.entidade.debito  }"
+                                                   onLabel="Sim" offLabel="Não">
+                            </p:selectBooleanButton>
+                        </div>
+                    </div>
+                </p:fieldset >
+                <p:fieldset id="itensJurosFieldset" >
+                    <h3 class="tituloFieldset">
+                        Filtro de juros
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Bandeira Cartão" for="bandeiraAutocomplete" />
+                            <p:autoComplete id="bandeiraAutocomplete" value="#{ managerCriarMaquinaCartao.itemJuros.bandeira }"
+                                            forceSelection="true" completeMethod="#{ managerAutocomplete.autocompleteBandeira}"
+                                            var="item" itemValue="#{item}" itemLabel="#{ item.nome }"
+                                            required="true" requiredMessage="Bandeira Cartão é um campo obrigatório"
+                                            dropdown="true" emptyMessage="Nenhum resultado encontrado" converter="conversor">
+                            </p:autoComplete>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Parcelamento" for="parcelamentoInputText" />
+                            <p:inputText id="parcelamentoInputText" value="#{ managerCriarMaquinaCartao.itemJuros.parcelamento }"
+                                         onkeydown="$(this).validateNumberOnly();"
+                                         maxlength="2"
+                                         required="true" requiredMessage="Número do documento é um campos obrigatório" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Juros" for="jurosInputText" />
+                            <p:inputText  id="jurosInputText" value="#{ managerCriarMaquinaCartao.itemJuros.taxa}"
+                                          onkeypress="$(this).autoNumeric({aSign:'% ', aSep: '.', aDec: ','} );"
+                                          required="true" requiredMessage="Número do documento é um campos obrigatório" >
+                                <f:convertNumber type="percent" locale="pt-BR" minFractionDigits="2" maxFractionDigits="2" pattern="% #0,00" /> 
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary-green" value="Adicionar" icon="ui-icon-plus" 
+                                         actionListener="#{managerCriarMaquinaCartao.adicionarItem()}"
+                                         update=":criarMaquinaCartaoForm:itensJurosFieldset" process=":criarMaquinaCartaoForm:itensJurosFieldset"/>
+                        <p:commandButton value="Limpar" icon="ui-icon-close" process="@this"
+                                         actionListener="#{managerCriarMaquinaCartao.limparItem()}" 
+                                         update=":criarMaquinaCartaoForm:itensJurosFieldset"/>
+                    </div>
+                    <p:dataTable id="filtrosDataTable" var="item" value="#{ managerCriarMaquinaCartao.entidade.itensJuros}"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="{currentPage} de {totalPages}"
+                                 rowsPerPageTemplate="5,10,15"
+                                 sortBy="bandeira.id"
+                                 rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                        <f:facet name="header" >
+                            <p:outputLabel value="Filtros #{managerCriarMaquinaCartao.entidade.itensJuros.size() > 0 ? '('.concat(managerCriarMaquinaCartao.entidade.itensJuros.size()).concat(')'): ''}" />
+                        </f:facet>
+
+                        <p:column headerText="Opções" width="10%" styleClass="options3">
+                            <p:commandButton title="Remover item"
+                                             process="@this"
+                                             onclick="confirmarRemocaoItemDialog.show()"
+                                             icon="ui-icon-trash">
+                                <f:setPropertyActionListener target="#{ managerCriarMaquinaCartao.itemJurosRemocao}" value="#{ item }" />
+                            </p:commandButton>
+                        </p:column>  
+
+
+                        <p:column headerText="Bandeira" >
+                            <h:outputText value="#{ item.bandeira.nome}"/>
+                        </p:column>
+                        <p:column headerText="Parcelamento" >
+                            <h:outputText value="#{ item.parcelamento}"/>
+                        </p:column>
+                        <p:column headerText="Juros" >
+                            <h:outputText value="#{ item.taxa * 100}">
+                                <f:convertNumber type="number" locale="pt-BR" pattern="% #0,00" /> 
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </p:fieldset>
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" 
+                                     icon="ui-icon-disk" actionListener="#{managerCriarMaquinaCartao.salvar()}" 
+                                     process="@this, :criarMaquinaCartaoForm:campoFieldset, :criarMaquinaCartaoForm:filtrosDataTable"
+                                     update="@this, :criarMaquinaCartaoForm:campoFieldset"/>
+                    <p:button rendered="#{managerCriarMaquinaCartao.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarMaquinaCartao.xhtml" />
+                    <p:button rendered="#{managerCriarMaquinaCartao.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarMaquinaCartao.xhtml?id=#{managerCriarMaquinaCartao.entidade.id}" />
+                </div>
+
+                <p:dialog id="confirmarRemocaoItemDialog" widgetVar="confirmarRemocaoItemDialog" header="Deseja realmente remover este item ?" dynamic="true"
+                          closable="true" closeOnEscape="true"
+                          modal="true" appendTo="@this" resizable="false" width="50%" height="100px" draggable="false">
+
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary" value="Sim" icon="ui-icon-disk" 
+                                         process="@this"
+                                         onclick="confirmarRemocaoItemDialog.hide();"
+                                         update="@this, 
+                                         :criarMaquinaCartaoForm:filtrosDataTable"
+                                         actionListener="#{managerCriarMaquinaCartao.removerItem()}"/>
+                        <p:commandButton value="Não" onclick="confirmarRemocaoItemDialog.hide();"
+                                         process="@this" update="@this"
+                                         icon="ui-icon-close"  />
+                    </div>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

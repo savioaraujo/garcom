@@ -1,0 +1,116 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Pesquisar Produtos
+        </ui:define>
+
+        <ui:define name="titulo">
+            Pesquisar Produtos
+        </ui:define>
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="pesquisarProdutoForm" >
+                <p:growl id="criarProdutoGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Cadastrar" outcome="criarProduto.xhtml" icon="ui-icon-plus"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">Campos Pesquisa</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Código" for="codigoInputText" />
+                            <p:inputText id="codigoInputText" value="#{ managerPesquisarProduto.entidade.codigo }"
+                                         required="false" requiredMessage="Codigo é obrigatório" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Descrição" for="descricaoInputText" />
+                            <p:inputText id="descricaoInputText" value="#{ managerPesquisarProduto.entidade.descricao }"
+                                         required="false" requiredMessage="Descricao é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Valor" for="valorInputText" />
+                            <p:inputText id="valorInputText" value="#{ managerPesquisarProduto.entidade.valor }"
+                                         required="false" requiredMessage="Valor é obrigatório" 
+                                         onkeypress="$(this).autoNumeric({aSign:'R$ ', aSep: '.', aDec: ','} );"
+                                         >
+                                <f:convertNumber type="currency" locale="pt-BR"  /> 
+                            </p:inputText>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Disponível ?" for="disponivelcheckBooleanButton" styleClass="bold-label"/>
+                            <p:selectBooleanButton id="disponivelcheckBooleanButton" 
+                                                   value="#{ managerPesquisarProduto.entidade.disponivel  }"
+                                                   onLabel="Sim" offLabel="Não">
+                            </p:selectBooleanButton>
+                        </div>
+                    </div>
+                    <div class="command col-md-12">
+                        <p:commandButton styleClass="ui-priority-primary" value="Pesquisar" icon="ui-icon-search"
+                                         id="fecharVendaButton"
+                                         onclick="desabilitarBotao(this, true);"
+                                         oncomplete="desabilitarBotao(this, false);"
+                                         actionListener="#{managerPesquisarProduto.pesquisar()}" 
+                                         update="@this, :pesquisarProdutoForm:resultadosFieldset"/>
+                    </div>
+
+                </p:fieldset>
+                <p:fieldset id="resultadosFieldset" >
+                    <h3 class="tituloFieldset">Resultados</h3>
+                    <p:dataTable id="idiomasDataTable" var="produto" value="#{ managerPesquisarProduto.resultados }"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="{currentPage} de {totalPages}"
+                                 rowsPerPageTemplate="5,10,15"
+                                 rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                        <f:facet name="header" >
+                            <p:outputLabel value="Produtos #{managerPesquisarProduto.resultados.size() > 0 ? '('.concat(managerPesquisarProduto.resultados.size()).concat(')'): ''}" />
+                        </f:facet>
+
+                        <p:column headerText="Opções" width="10%" styleClass="options3">
+                            <p:button title="visualizar" icon="ui-icon-search" outcome="visualizarProduto.xhtml?id=#{produto.id}" target="_blank"/>
+                        </p:column>  
+
+                        <p:column headerText="Código" >
+                            <h:outputText value="#{ produto.codigo }"/>
+                        </p:column>
+                        <p:column headerText="Descrição" >
+                            <h:outputText value="#{ produto.descricao }"/>
+                        </p:column>
+                        <p:column headerText="Valor" >
+                            <h:outputText value="#{ produto.valor }">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Disponível" >
+                            <h:outputText value="#{ produto.disponivel ? 'Sim' : 'Não'}"/>
+                        </p:column>
+                        <p:column headerText="Estoque" >
+                            <h:outputText value="#{ produto.estoque}">
+                                <f:convertNumber type="number" locale="pt-BR"  />
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+
+                </p:fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

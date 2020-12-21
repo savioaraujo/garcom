@@ -1,0 +1,22 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package br.com.garcom.servico;
+
+import br.com.garcom.modelo.${entityName};
+import java.util.List;
+import javax.ejb.Stateless;
+
+/**
+ *
+ * @author evaldosavio
+ */
+@Stateless
+public class ${entityName}Servico extends ServicoGenerico<${entityName}> {
+    
+    
+      public List<${entityName}> autocompletar(String texto){
+          return findAll();
+      }
+}

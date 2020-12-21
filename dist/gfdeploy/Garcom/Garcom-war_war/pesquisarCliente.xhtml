@@ -1,0 +1,101 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Pesquisar Clientes
+        </ui:define>
+
+        <ui:define name="titulo">
+            Pesquisar Clientes
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="pesquisarClienteForm" >
+                <p:growl id="criarClienteGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Cadastrar" outcome="criarCliente.xhtml" icon="ui-icon-plus"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Nome" for="nomeInputText" />
+                            <p:inputText id="nomeInputText" value="#{ managerPesquisarCliente.entidade.nome }"
+                                         required="false" requiredMessage="Nome é obrigatório" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Apelido" for="apelidoInputText" />
+                            <p:inputText id="apelidoInputText" value="#{ managerPesquisarCliente.entidade.apelido }"
+                                         required="false" requiredMessage="Apelido é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Data de Nascimento" for="dataNascimentoSelectOneMenu" />
+                            <p:calendar id="dataNascimentoSelectOneMenu" value="#{ managerPesquisarCliente.entidade.dataNascimento }"
+                                        showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  />
+                        </div>
+                    </div>
+
+                    <div class="command col-md-12">
+                        <p:commandButton styleClass="ui-priority-primary" value="Pesquisar" icon="ui-icon-search"
+                                         id="fecharVendaButton"
+                                         onclick="desabilitarBotao(this, true);"
+                                         oncomplete="desabilitarBotao(this, false);"
+                                         actionListener="#{managerPesquisarCliente.pesquisar()}" update="@this, pesquisarClienteForm:resultadosFieldset"/>
+                    </div>
+                    <p:fieldset id="resultadosFieldset" legend="Resultados" >
+
+                        <p:dataTable id="idiomasDataTable" var="cliente" value="#{ managerPesquisarCliente.resultados }"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="{currentPage} de {totalPages}"
+                                     rowsPerPageTemplate="5,10,15"
+                                     rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                            <f:facet name="header" >
+                                <p:outputLabel value="Clientes #{managerPesquisarCliente.resultados.size() > 0 ? '('.concat(managerPesquisarCliente.resultados.size()).concat(')'): ''}" />
+                            </f:facet>
+
+                            <p:column headerText="Opções" width="10%" styleClass="options3">
+                                <p:button title="visualizar" icon="ui-icon-search" outcome="visualizarCliente.xhtml?id=#{cliente.id}"/>
+                            </p:column>  
+
+                            <p:column headerText="nome" >
+                                <h:outputText value="#{ cliente.nome }"/>
+                            </p:column>
+                            <p:column headerText="apelido" >
+                                <h:outputText value="#{ cliente.apelido }"/>
+                            </p:column>
+                            <p:column headerText="data de Nascimento" >
+                                <h:outputText value="#{ cliente.dataNascimento }">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" locale="pt"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="habilitado pagamento de funcionário?" >
+                                <h:outputText value="#{ cliente.habilitaPagamentoFuncionario ? 'Sim' : 'Não'}"/>
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:fieldset>
+
+                </p:fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

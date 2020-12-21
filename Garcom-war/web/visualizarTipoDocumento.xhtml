@@ -1,0 +1,98 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Visualizar TipoDocumento
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#configuracoesMenu').addClass('active');
+            </script>
+            <h:form id="visualizarTipoDocumentoForm" >
+                <p:growl id="visualizarTipoDocumentoGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Cadastrar" outcome="criarTipoDocumento.xhtml" icon="ui-icon-plus"
+                                  style="float:left;"
+                                  styleClass="ui-priority-primary" />
+                        <p:button value="Pesquisar" outcome="pesquisarTipoDocumento.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear">
+                            <p:menuitem value="Editar" icon="ui-icon-pencil" outcome="criarTipoDocumento.xhtml">
+                                <f:param name="id" value="#{ managerPesquisarTipoDocumento.entidade.id}"/>
+                            </p:menuitem>
+                            <p:menuitem value="Excluir" icon="ui-icon-trash" oncomplete="deletarDialog.show();"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Descricao:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarTipoDocumento.entidade.descricao }" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Mascara:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarTipoDocumento.entidade.mascara }" />
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Disponivel Em" for="disponivelEm"/>
+                            <p:pickList id="disponivelEm" value="#{managerPesquisarTipoDocumento.dualListDisponivelEm}" var="tipoCadastro"  
+                                        filterMatchMode="contains"
+                                        disabled="true"         
+                                        converter="TipoCadastroConverter"
+                                        itemLabel="#{tipoCadastro.descricao}" itemValue="#{tipoCadastro}" 
+                                        addLabel="Adcionar" addAllLabel="Adicionar Todos" removeLabel="Remover"
+                                        removeAllLabel="Remover Todos" showSourceFilter="true" showTargetFilter="true">
+                                <f:facet name="sourceCaption">Disponíveis</f:facet>  
+                                <f:facet name="targetCaption">Selecionados</f:facet>  
+                            </p:pickList>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Obrigatorio Em" for="obrigatoriedadeEm"/>
+                            <p:pickList id="obrigatoriedadeEm" value="#{managerPesquisarTipoDocumento.dualListObrigatorioEm}" var="tipoCadastro"  
+                                        disabled="true"
+                                        converter="TipoCadastroConverter"
+                                        filterMatchMode="contains"
+                                        itemLabel="#{tipoCadastro.descricao}" itemValue="#{tipoCadastro}" 
+                                        addLabel="Adcionar" addAllLabel="Adicionar Todos" removeLabel="Remover"
+                                        removeAllLabel="Remover Todos" showSourceFilter="true" showTargetFilter="true">
+                                <f:facet name="sourceCaption">Disponíveis</f:facet>  
+                                <f:facet name="targetCaption">Selecionados</f:facet>  
+                            </p:pickList>
+                        </div>
+
+
+                    </div>
+
+                </p:fieldset>
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check" actionListener="#{ managerPesquisarTipoDocumento.delete() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>   
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

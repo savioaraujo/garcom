@@ -1,0 +1,137 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="title">
+            Cadastro de TipoDocumento
+        </ui:define>
+
+        <ui:define name="content">
+
+            <script>
+                $('#configuracoesMenu').addClass('active');
+            </script>
+            <h:form id="criarTipoDocumentoForm" >
+                <p:growl id="criarTipoDocumentoGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">                        
+                        <p:button value="Pesquisar" outcome="pesquisarTipoDocumento.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Descricao" for="descricaoInputText" />
+                            <p:inputText id="descricaoInputText" value="#{ managerCriarTipoDocumento.entidade.descricao }"
+                                         required="false" requiredMessage="Descricao é obrigatório" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Mascara" for="mascaraInputText" />
+                            <p:inputText id="mascaraInputText" value="#{ managerCriarTipoDocumento.entidade.mascara }"
+                                         required="false" requiredMessage="Mascara é obrigatório" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Disponivel Em" for="disponivelEm"/>
+                            <p:pickList id="disponivelEm" value="#{managerCriarTipoDocumento.dualListDisponivelEm}" var="tipoCadastro"  
+                                        required="true" filterMatchMode="contains"
+                                        converter="TipoCadastroConverter"
+                                        itemLabel="#{tipoCadastro.descricao}" itemValue="#{tipoCadastro}" 
+                                        addLabel="Adcionar" addAllLabel="Adicionar Todos" removeLabel="Remover"
+                                        removeAllLabel="Remover Todos" showSourceFilter="true" showTargetFilter="true">
+                                <f:facet name="sourceCaption">Disponíveis</f:facet>  
+                                <f:facet name="targetCaption">Selecionados</f:facet>  
+                            </p:pickList>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Obrigatorio Em" for="obrigatoriedadeEm"/>
+                            <p:pickList id="obrigatoriedadeEm" value="#{managerCriarTipoDocumento.dualListObrigatorioEm}" var="tipoCadastro"  
+                                        filterMatchMode="contains"
+                                        converter="TipoCadastroConverter"
+                                        itemLabel="#{tipoCadastro.descricao}" itemValue="#{tipoCadastro}" 
+                                        addLabel="Adcionar" addAllLabel="Adicionar Todos" removeLabel="Remover"
+                                        removeAllLabel="Remover Todos" showSourceFilter="true" showTargetFilter="true">
+                                <f:facet name="sourceCaption">Disponíveis</f:facet>  
+                                <f:facet name="targetCaption">Selecionados</f:facet>  
+                            </p:pickList>
+                        </div>
+                    </div>
+
+                </p:fieldset >
+                <p:fieldset id="subCamposFieldset" style="margin-bottom: 10px">
+                    <h3 class="tituloFieldset">Subcampos do documento</h3>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Nome" for="nomeSubMacroInputText" />
+                            <p:inputText id="nomeSubMacroInputText" value="#{ managerCriarTipoDocumento.subCampo.nome }"/>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Tipo de dado" for="tipoInputSelectOneMenu" />
+                            <p:selectOneMenu id="tipoInputSelectOneMenu" value="#{ managerCriarTipoDocumento.subCampo.tipoInput}">
+                                <f:selectItems value="#{ enums.tipoInput() }"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Mascara" for="mascaraSubCampoInputText" />
+                            <p:inputText id="mascaraSubCampoInputText" value="#{ managerCriarTipoDocumento.subCampo.mascara }"/>
+                        </div>
+                    </div>
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary-green" value="Adicionar" icon="ui-icon-disk" 
+                                         actionListener="#{managerCriarTipoDocumento.adicionarSubCampo()}" 
+                                         update=":criarTipoDocumentoForm:subCamposFieldset" process=":criarTipoDocumentoForm:subCamposFieldset"/>
+                        <p:commandButton value="Limpar" icon="ui-icon-close" process="@this"
+                                         actionListener="#{managerCriarTipoDocumento.iniciarSubCampo()}" 
+                                         update=":criarTipoDocumentoForm:subCamposFieldset"/>
+                    </div>
+
+                    <p:dataTable id="subCamposDataTable" var="subCampo" value="#{ managerCriarTipoDocumento.entidade.subCampos }"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="{currentPage} de {totalPages}" rowsPerPageTemplate="5,10,15"
+                                 rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                        <f:facet name="header" >
+                            <p:outputLabel value="Embarcações #{managerCriarTipoDocumento.entidade.subCampos.size() > 0 ? '('.concat(managerCriarTipoDocumento.entidade.subCampos.size()).concat(')'): ''}" />
+                        </f:facet>
+
+                        <p:column headerText="Opções" width="10%" styleClass="options2">
+                            <p:commandButton title="Editar" icon="ui-icon-pencil" disabled="#{ managerCriarTipoDocumento.subCampo.id ne null }"
+                                             actionListener="#{ managerCriarTipoDocumento.editarSubCampo( subCampo ) }"
+                                             process="@this" update=":criarTipoDocumentoForm:subCamposFieldset"/>
+                            <p:commandButton title="Remover" icon="ui-icon-trash" disabled="#{ managerCriarTipoDocumento.subCampo.id ne null }"
+                                             actionListener="#{ managerCriarTipoDocumento.removerSubCampo( subCampo ) }"
+                                             process="@this" update=":criarTipoDocumentoForm:subCamposDataTable"/>
+                        </p:column>  
+                        <p:column headerText="Nome" >
+                            <h:outputText value="#{ subCampo.nome }"/>
+                        </p:column>
+                        <p:column headerText="Tipo" >
+                            <h:outputText value="#{ subCampo.tipoInput.nome }"/>
+                        </p:column>
+                        <p:column headerText="Mascara" >
+                            <h:outputText value="#{ subCampo.mascara}"/>
+                        </p:column>
+                    </p:dataTable>
+
+                </p:fieldset>
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" actionListener="#{managerCriarTipoDocumento.salvar()}" update=":criarTipoDocumentoForm:campoFieldset"/>
+                    <p:button rendered="#{managerCriarTipoDocumento.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarTipoDocumento.xhtml" />
+                    <p:button rendered="#{managerCriarTipoDocumento.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarTipoDocumento.xhtml?id=#{managerCriarTipoDocumento.entidade.id}" />
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

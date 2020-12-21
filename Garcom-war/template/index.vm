@@ -1,0 +1,109 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="titulo">
+            ${entityName}s
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('current');
+            </script>
+
+            <h:form id="pesquisar${entityName}Form" >
+                <p:growl id="criar${entityName}Growl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Cadastrar" outcome="criar${entityName}.xhtml" icon="ui-icon-plus"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                        #foreach( $field in $fields )
+                            #if ( $field.getType().equals("STRING") )
+                                $field.process( "template/components/input.vm" )
+                            #end
+                            #if ( $field.getType().equals("TEXT") )
+                                $field.process( "template/components/input.vm" )
+                            #end
+                            #if ( $field.getType().equals("BEAN") )
+                                    $field.process( "template/components/autocomplete.vm" )
+                            #end
+                            #if ( $field.getType().equals("BOOLEAN") )
+                                    $field.process( "template/components/checkbox.vm" )
+                            #end
+                            #if ( $field.getType().equals("ENUM") )
+                                    $field.process( "template/components/selectOneMenu.vm" )
+                            #end
+                            #if ( $field.getType().equals("BIGDECIMAL") )
+                                    $field.process( "template/components/inputCurrency.vm" )
+                            #end
+                            #if ( $field.getType().equals("DATE") )
+                                    $field.process( "template/components/calendar.vm" )
+                            #end
+                        #end
+                          <div class="command col-md-12">
+                            <p:commandButton styleClass="ui-priority-primary" value="Pesquisar" icon="ui-icon-search"
+                                             actionListener="#{managerPesquisar${entityName}.pesquisar()}" update="pesquisar${entityName}Form:resultadosFieldset"/>
+                           </div>                    
+                </p:fieldset>
+                <p:fieldset id="resultadosFieldset" >
+                        <h3 class="tituloFieldset">
+                            Resultados
+                        </h3>
+                        <p:dataTable id="idiomasDataTable" var="${entityNameLower}" value="#{ managerPesquisar${entityName}.resultados }"
+                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     currentPageReportTemplate="{currentPage} de {totalPages}"
+                                     rowsPerPageTemplate="5,10,15"
+                                     rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                            <f:facet name="header" >
+                                <p:outputLabel value="${entityName}s #{managerPesquisar${entityName}.resultados.size() > 0 ? '('.concat(managerPesquisar${entityName}.resultados.size()).concat(')'): ''}" />
+                            </f:facet>
+
+                            <p:column headerText="Opções" width="10%" styleClass="options3">
+                                <p:button title="visualizar" icon="ui-icon-search" outcome="visualizar${entityName}.xhtml?id=#{${entityNameLower}.id}"/>
+                            </p:column>  
+
+                            #foreach( $field in $fields )
+                                #if ( $field.getType().equals("STRING") )
+                                   $field.process( "template/components/column/column.vm" )
+                                #end
+                                #if ( $field.getType().equals("TEXT") )
+                                   $field.process( "template/components/column/column.vm" )
+                                #end
+                                #if ( $field.getType().equals("DATE") )
+                                        $field.process( "template/components/column/column_date.vm" )
+                                #end
+                                #if ( $field.getType().equals("BIGDECIMAL") )
+                                        $field.process( "template/components/column/column_currency.vm" )
+                                #end
+                                #if ( $field.getType().equals("BEAN") )
+                                        $field.process( "template/components/column/column_bean.vm" )
+                                #end
+                                #if ( $field.getType().equals("ENUM") )
+                                        $field.process( "template/components/column/column_enum.vm" )
+                                #end
+                                #if ( $field.getType().equals("BOOLEAN") )
+                                        $field.process( "template/components/column/column_boolean.vm" )
+                                #end
+                            #end  
+                            
+                        </p:dataTable>
+
+                    </p:fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

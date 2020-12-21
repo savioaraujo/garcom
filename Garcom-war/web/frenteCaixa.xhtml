@@ -1,0 +1,803 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Frente de caixa - <b>#{managerCriarVenda.entidade.tipoVenda.descricao.toUpperCase()}</b>
+        </ui:define>
+
+        <ui:define name="titulo">
+            Frente de caixa - <b>#{managerCriarVenda.entidade.tipoVenda.descricao.toUpperCase()}</b>
+        </ui:define>
+
+        <ui:define name="content">
+
+            <h:form id="criarVendaForm" >
+                <script type="text/javascript" src="media/js/validateNumberOnly.js"></script>
+                <p:growl id="criarProdutoGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarVenda.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear"
+                                       id="menuSlitButton"
+                                       style="#{managerCriarVenda.entidade.codigo ne null ? '' : 'display:none'}">
+                            <p:menuitem value="Converter em venda" 
+                                        rendered="#{managerCriarVenda.entidade.tipoVenda eq 'ORCAMENTO'}"
+                                        icon="ui-icon-refresh" oncomplete="converterEmVendaDialog.show();"/>
+                            <p:menuitem value="Cancelar" icon="ui-icon-trash" oncomplete="deletarDialog.show();"
+                                        update="@this, :criarVendaForm:confirmarCancelamentoButton"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset">
+                    <h3 class="tituloFieldset">
+                        Informações : <h:outputText id="codigoVendaOutputlabel" value="#{managerCriarVenda.entidade.tipoVenda.descricao} #{managerCriarVenda.entidade.codigo eq null ? ' não cadastrado' : 'Nº '.concat(managerCriarVenda.entidade.codigo )}" />
+                    </h3>
+                    <div class="row">
+
+                        <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
+                            <p:outputLabel value="Cliente" for="clienteInputText" />
+                            <p:autoComplete id="clienteInputText" value="#{ managerCriarVenda.entidade.cliente}" scrollHeight="200"
+                                            forceSelection="true" dropdown="true" var="cliente" itemValue="#{ cliente }" 
+                                            disabled="#{managerCriarVenda.entidade.id ne null and managerCriarVenda.entidade.cliente.id ne null}"
+                                            itemLabel="#{ cliente.nome }" completeMethod="#{ managerAutocomplete.autocompleteCliente}"
+                                            converter="conversor" minQueryLength="3" >
+                                <p:ajax event="itemSelect" process="@this" listener="#{managerCriarVenda.buscarVendasCliente()}"
+                                        update="@this
+                                        :criarVendaForm:fecharVendaButton
+                                        :criarVendaForm:menuSlitButton
+                                        :criarVendaForm:codigoVendaOutputlabel
+                                        :criarVendaForm:campoFieldset
+                                        :criarVendaForm:clienteInputText
+                                        :criarVendaForm:produtoAutocomplete
+                                        :criarVendaForm:quantidadeInputText
+                                        :criarVendaForm:valorUnitarioInputText
+                                        :criarVendaForm:totalItemInputText
+                                        :criarVendaForm:itensVendaDataTable
+                                        :criarVendaForm:totalVendaOutputLabel"/>
+
+                            </p:autoComplete>
+                        </div>
+
+                        <p:commandButton styleClass="icon-plus"
+                                         style="margin-top:25px; #{managerCriarVenda.entidade.id eq nul ? '' : 'display:none'}"
+                                         id="clienteButtonDialog"
+                                         icon="#{ managerCriarVenda.entidade.cliente.id eq null ? 'ui-icon-plus' : 'ui-icon-pencil' }"
+                                         title="#{ managerCriarVenda.entidade.cliente.id eq null ? 'Cadastrar' : 'Editar' }"
+                                         onclick="clienteDialog.show();"
+                                         actionListener="#{managerCriarVenda.setarCliente()}"
+                                         process="@this" update="@this, :criarVendaForm:campoFieldsetCliente, :criarVendaForm:enderecoFieldset" immediate="true" />
+
+                        <p:commandButton styleClass="icon-plus"
+                                         id="reiniciarVendaButton"
+                                         style="margin-top:25px; #{managerCriarVenda.entidade.id ne null ? '' : 'display:none;'}"
+                                         icon="ui-icon-refresh"
+                                         title="Alternar venda"
+                                         process="@this"
+                                         actionListener="#{managerCriarVenda.reiniciarVenda()}"
+                                         update="@this
+                                         :criarVendaForm:fecharVendaButton
+                                         :criarVendaForm:menuSlitButton
+                                         :criarVendaForm:codigoVendaOutputlabel
+                                         :criarVendaForm:campoFieldset
+                                         :criarVendaForm:clienteInputText
+                                         :criarVendaForm:produtoAutocomplete
+                                         :criarVendaForm:quantidadeInputText
+                                         :criarVendaForm:valorUnitarioInputText
+                                         :criarVendaForm:totalItemInputText
+                                         :criarVendaForm:itensVendaDataTable
+                                         :criarVendaForm:totalVendaOutputLabel
+                                         :criarVendaForm:demaisCamposItemVendaPanel"/>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <p:outputLabel value="Produto" for="produtoAutocomplete" />
+                            <p:autoComplete id="produtoAutocomplete" value="#{ managerCriarVenda.itemVenda.produto}" scrollHeight="200"
+                                            disabled="#{managerCriarVenda.entidade.cliente.id eq null}"
+                                            forceSelection="true" dropdown="true" var="produto" itemValue="#{ produto }" 
+                                            onkeypress="if (event.keyCode == 13) {event.preventDefault(); adicionarProdutoButton.jq.click(); return false; }" 
+                                            itemLabel="#{ produto.codigo ne null and produto.codigo ne '' ? produto.codigo.concat(' - ') : ''}#{produto.descricao}" completeMethod="#{ managerAutocomplete.autocompleteProduto}"
+                                            converter="conversor_produto" minQueryLength="3" >
+                                <p:ajax event="itemSelect" process="@this" listener="#{managerCriarVenda.selecionarProduto()}"
+                                        update=":criarVendaForm:valorUnitarioInputText
+                                        :criarVendaForm:demaisCamposItemVendaPanel
+                                        :criarVendaForm:camposExtrasProduto
+                                        :criarVendaForm:totalItemInputText"/>
+                                <p:ajax event="blur" process="@this" listener="#{managerCriarVenda.selecionarProduto()}"
+                                        update=":criarVendaForm:valorUnitarioInputText
+                                        :criarVendaForm:demaisCamposItemVendaPanel
+                                        :criarVendaForm:camposExtrasProduto
+                                        :criarVendaForm:totalItemInputText"/>
+                            </p:autoComplete>
+                        </div>
+
+                        <div class="col-md-2">
+                            <p:outputLabel value="Vl. Unit." for="valorUnitarioInputText" />
+                            <p:inputText id="valorUnitarioInputText" value="#{managerCriarVenda.itemVenda.valorUnitario}" 
+                                         onkeypress="$(this).autoNumeric({aSign:'R$ ', aSep: '.', aDec: ','} );if (event.keyCode == 13) {event.preventDefault(); adicionarProdutoButton.jq.click(); return false; }" 
+                                         disabled="#{managerCriarVenda.entidade.cliente.id eq null}"
+                                         required="true" requiredMessage="Informa o valor unitário" >
+                                <f:convertNumber type="currency" locale="pt-BR" />
+                                <p:ajax event="blur" process="@this" listener="#{managerCriarVenda.onBlurValor()}"
+                                        update=":criarVendaForm:valorUnitarioInputText
+                                        :criarVendaForm:totalItemInputText"/>
+                            </p:inputText>
+                        </div>
+
+                        <div class="col-md-2">
+                            <p:outputLabel value="Quantidade" for="quantidadeInputText" />
+                            <p:inputText id="quantidadeInputText" value="#{managerCriarVenda.itemVenda.quantidade}" 
+                                         onkeypress="$(this).validateNumberOnly();if (event.keyCode == 13) {event.preventDefault(); adicionarProdutoButton.jq.click(); return false; }" 
+                                         disabled="#{managerCriarVenda.entidade.cliente.id eq null}">
+                                <p:ajax event="blur" process="@this" listener="#{managerCriarVenda.onBlurQuantiade()}"
+                                        update=":criarVendaForm:quantidadeInputText
+                                        :criarVendaForm:camposExtrasProduto
+                                        :criarVendaForm:totalItemInputText"/>
+                            </p:inputText>
+                        </div>
+
+
+                        <div class="col-md-2">
+                            <p:outputLabel value="Total" for="totalItemInputText" />
+                            <p:inputText id="totalItemInputText" value="#{managerCriarVenda.itemVenda.valorTotal}" 
+                                         disabled="true"
+                                         onkeypress="$(this).autoNumeric({aSign:'R$ ', aSep: '.', aDec: ','} );">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:inputText>
+                        </div>
+                        <p:panel id="demaisCamposItemVendaPanel" styleClass="noborder" 
+                                 style="#{managerCriarVenda.itemVenda.produto.permitirEscreverObservacoes ne null ? (managerCriarVenda.itemVenda.produto.permitirEscreverObservacoes ? '': 'display:none'): 'display:none'}">
+                            <div class="col-md-12" style="padding-right: 0px!important; padding-left: 0px!important;">
+                                <p:outputLabel value="Observações" for="observacoesItemVendaTextArea" />
+                                <p:inputTextarea id="observacoesItemVendaTextArea" value="#{managerCriarVenda.itemVenda.observacoes}"/>
+                            </div>
+                        </p:panel>
+
+                        <div class="col-md-1">
+                            <p:commandButton styleClass="ui-priority-primary" value="Adicionar"
+                                             icon="ui-icon-plus"
+                                             onclick="desabilitarBotao(this, true);"
+                                             oncomplete="desabilitarBotao(this, false);"
+                                             style="margin-top:25px"
+                                             title="Adicionar produto"
+                                             widgetVar="adicionarProdutoButton"
+                                             disabled="#{managerCriarVenda.entidade.cliente.id eq null}"
+                                             actionListener="#{managerCriarVenda.adicionarItem()}"
+                                             process="@this
+                                             :criarVendaForm:clienteInputText
+                                             :criarVendaForm:observacoesItemVendaTextArea
+                                             :criarVendaForm:produtoAutocomplete
+                                             :criarVendaForm:quantidadeInputText
+                                             :criarVendaForm:valorUnitarioInputText
+                                             :criarVendaForm:camposExtrasProduto
+                                             :criarVendaForm:totalItemInputText" 
+                                             update="@this
+                                             :criarVendaForm:fecharVendaButton
+                                             :criarVendaForm:menuSlitButton
+                                             :criarVendaForm:codigoVendaOutputlabel
+                                             :criarVendaForm:clienteInputText
+                                             :criarVendaForm:produtoAutocomplete
+                                             :criarVendaForm:quantidadeInputText
+                                             :criarVendaForm:valorUnitarioInputText
+                                             :criarVendaForm:totalItemInputText
+                                             :criarVendaForm:reiniciarVendaButton
+                                             :criarVendaForm:clienteButtonDialog
+                                             :criarVendaForm:itensVendaDataTable
+                                             :criarVendaForm:totalVendaOutputLabel
+                                             :criarVendaForm:camposExtrasProduto
+                                             :criarVendaForm:demaisCamposItemVendaPanel"/>
+                        </div>
+                    </div>
+                    <h:panelGroup id="camposExtrasProduto" styleClass="row no-border" style="#{managerCriarVenda.itemAditivoVenda.produto.id eq null ? 'display:none' : ''}" >
+                        <div class="col-md-4" >
+                            <p:outputLabel styleClass="bold-label" value="Aditivo"  />
+                            <p:inputText styleClass="text-label" value="#{managerCriarVenda.itemAditivoVenda.produto.descricao}" 
+                                         disabled="true" rendered="#{managerCriarVenda.itemAditivoVenda.produto.id ne null }"/>
+                        </div>
+                        <div class="col-md-2" >
+                            <p:outputLabel styleClass="bold-label" value="Vl. Aditivo"  />
+                            <p:inputText styleClass="text-label" value="#{managerCriarVenda.itemAditivoVenda.valorUnitario}" 
+                                         disabled="true" rendered="#{managerCriarVenda.itemAditivoVenda.produto.id ne null }">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:inputText>
+                        </div>
+                        <div class="col-md-2">
+                            <p:outputLabel value="Quantidade Aditivo" for="quantidadeAditivoSpinner" styleClass="bold-label"/>
+                            <p:spinner id="quantidadeAditivoSpinner" min="0" max="#{managerCriarVenda.itemVenda.quantidade * managerCriarVenda.itemAditivoVenda.itemAditivoProduto.quantidade}" 
+                                       value="#{managerCriarVenda.itemAditivoVenda.quantidade}"
+                                       rendered="#{managerCriarVenda.itemAditivoVenda.produto.id ne null }"
+                                       onkeypress="$(this).validateNumberOnly();if (event.keyCode == 13) {event.preventDefault(); adicionarProdutoButton.jq.click(); return false; }" >
+                                <p:ajax event="change" process="@this" listener="#{managerCriarVenda.calcularTotalItem()}"
+                                        update=":criarVendaForm:quantidadeInputText
+                                        :criarVendaForm:camposExtrasProduto
+                                        :criarVendaForm:totalItemInputText"/>
+                            </p:spinner>
+                        </div>
+                        <div class="col-md-2" >
+                            <p:outputLabel styleClass="bold-label" value="Total Aditivo"  />
+                            <p:inputText styleClass="text-label" value="#{managerCriarVenda.itemAditivoVenda.valorTotal}" 
+                                         disabled="true" rendered="#{managerCriarVenda.itemAditivoVenda.produto.id ne null }">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:inputText>
+                        </div>
+                        <div class="col-md-2" style="#{managerCriarVenda.itemAditivoVenda.dataVencimento eq null ? 'display:none':''}">
+                            <p:outputLabel styleClass="bold-label" value="Prazo para devolver"  />
+                            <p:inputText styleClass="text-label" value="#{managerCriarVenda.itemAditivoVenda.dataVencimento}"
+                                         disabled="true" rendered="#{managerCriarVenda.itemAditivoVenda.produto.id ne null }">
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="pt-BR"  />
+                            </p:inputText>
+                        </div>
+
+                    </h:panelGroup>
+                    <div class="row">
+                        <p:panel id="itensVendaDataTable" styleClass="noborder">
+
+                            <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                <div class="box-header with-border" style="text-align: center;">
+                                    <h3 class="box-title" >Items #{ not empty managerCriarVenda.entidade.itemVenda ? '('.concat(managerCriarVenda.entidade.itemVenda.size()).concat(')') : ''}</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Descrição</th>
+                                                    <th>Valor Unitário</th>
+                                                    <th>Quantidade</th>
+                                                    <th>Valor Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat value="#{ managerCriarVenda.itensOrdenados() }" var="item">
+                                                    <tr>
+                                                        <td>
+
+                                                            <p:commandButton title="Remover item"
+                                                                             process="@this"
+                                                                             onclick="confirmarRemocaoItemDialog.show()"
+                                                                             icon="ui-icon-trash">
+                                                                <f:setPropertyActionListener target="#{ managerCriarVenda.itemVendaRemocao }" value="#{ item }" />
+                                                            </p:commandButton>
+
+                                                            <p:commandButton title="Visualizar dados do item"
+                                                                             onclick="exibirDetalhesItemDialog.show()"
+                                                                             update="@this, :criarVendaForm:dadosItemFieldSet"
+                                                                             process="@this"
+                                                                             icon="ui-icon-search">
+                                                                <f:setPropertyActionListener target="#{ managerCriarVenda.itemVisualizacao }" value="#{ item }" />
+                                                            </p:commandButton>
+                                                        </td>
+                                                        <td>#{item.descricaoProduto}</td>
+                                                        <td><h:outputText value="#{ item.valorUnitario }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText></td>
+                                                        <td>#{ item.quantidade}</td>
+                                                        <td>
+                                                            <h:outputText value="#{ item.valorTotalComAditivo ne null ? item.valorTotalComAditivo : item.valorTotal }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <p:outputLabel value="Nenhum item adicionado" rendered="#{empty managerCriarVenda.entidade.itemVenda}" />
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                </div>
+                            </div>
+                        </p:panel>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11" style="text-align: right">
+                            <p:outputLabel value="TOTAL:"/>
+                            <p:outputLabel id="totalVendaOutputLabel" value="#{managerCriarVenda.entidade.valorTotal}">
+                                <f:convertNumber type="currency" locale="pt-BR"  />
+                            </p:outputLabel>
+                        </div>
+                    </div>
+
+                </p:fieldset>
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" 
+                                     disabled="#{managerCriarVenda.desabilitaBotaoVenda()}"
+                                     rendered="#{managerCriarVenda.entidade.tipoVenda eq 'VENDA'}"
+                                     id="fecharVendaButton"
+                                     onclick="fecharVendaDialog.show()"
+                                     process="@this" immediate="true"
+                                     update="@this, :criarVendaForm:valorPagamentoText"
+                                     value="Fechar venda" icon="ui-icon-check"/>
+                    <p:button value="Voltar" icon=" ui-icon-arrowreturn-1-w" outcome="index.xhtml" />
+                </div>
+
+                <p:dialog id="confirmarRemocaoItemDialog" widgetVar="confirmarRemocaoItemDialog" header="Deseja realmente remover este item ?" dynamic="true"
+                          closable="true" closeOnEscape="true"
+                          modal="true" appendTo="@this" resizable="false" width="50%" height="100px" draggable="false">
+
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary" value="Sim" icon="ui-icon-disk" 
+                                         process="@this, :criarVendaForm:campoFieldset"
+                                         update="@this, 
+                                         :criarVendaForm:campoFieldset, 
+                                         :criarVendaForm:fecharVendaButton, 
+                                         :criarVendaForm:menuSlitButton
+                                         :criarVendaForm:codigoVendaOutputlabel, 
+                                         :criarVendaForm:itensVendaDataTable"
+                                         actionListener="#{managerCriarVenda.removerItemVenda()}"/>
+                        <p:commandButton value="Não" onclick="confirmarRemocaoItemDialog.hide();" process="@this" 
+                                         icon="ui-icon-close"  />
+                    </div>
+                </p:dialog>
+
+                <p:dialog id="fecharVendaDialog" widgetVar="fecharVendaDialog" header="Deseja realmente fechar esta venda ?" dynamic="true"
+                          closable="false"
+                          visible="#{managerCriarVenda.pagar}"
+                          modal="true" appendTo="@this" resizable="false" width="100%" height="500px" draggable="false">
+                    <p:ajax event="close" listener="#{managerCriarVenda.removerParcelas()}"/>
+                    <p:fieldset id="campoFieldsetPagamento" >
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <p:outputLabel value="Forma de Pagamento" for="formaPagamentoSelectOneMenu" />
+                                <p:selectOneMenu id="formaPagamentoSelectOneMenu" value="#{ managerCriarVenda.itemPagamento.formaPagamento }"
+                                                 required="false" requiredMessage="Forma de Pagamento é obrigatório para adicionar um pagamento">
+                                    <f:selectItems value="#{ enums.formasDePagamento(managerCriarVenda.entidade.cliente) }" />
+                                    <p:ajax event="change" 
+                                            update="@this
+                                            :criarVendaForm:campoFieldsetPagamento" 
+                                            process="@this"
+                                            listener="#{managerCriarVenda.setarValorRestante()}"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <p:outputLabel value="Valor" for="valorPagamentoText" />
+                                <p:inputText id="valorPagamentoText" value="#{ managerCriarVenda.itemPagamento.valor }"
+                                             required="true" requiredMessage="Valor é obrigatório" onkeypress="$(this).autoNumeric({aSign:'R$ ', aSep: '.', aDec: ','} );">
+                                    <f:convertNumber type="currency" locale="pt-BR"  />
+                                </p:inputText>
+                            </div>
+                        </div>
+                        <h:panelGroup id="panelMaquina" style="border:none;#{managerCriarVenda.itemPagamento.formaPagamento eq 'CARTAO_CREDITO' or managerCriarVenda.itemPagamento.formaPagamento eq 'CARTAO_DEBITO' ? '' : 'display:none;'}" >
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <p:outputLabel value="Máquina" for="maquinaSelectOneMenu" />
+
+                                <p:autoComplete id="maquinaSelectOneMenu" 
+                                                value="#{ managerCriarVenda.itemPagamento.maquinaCartao }"
+                                                scrollHeight="200"
+                                                converter="conversor" forceSelection="true" 
+                                                var="maquina" itemValue="#{ maquina }" itemLabel="#{maquina.nome}"
+                                                panelStyleClass="autocomplete_dialog"
+                                                emptyMessage="Nenhuma máquina encontrado para esta forma de pagamento"
+                                                dropdown="true" minQueryLength="1" completeMethod="#{managerCriarVenda.maquinasDisponiveis}">
+                                    <p:ajax event="itemSelect"  process="@this" update=":criarVendaForm:bandeiraSelectOneMenu
+                                            :criarVendaForm:parcelamentoSelectOneMenu2"/>
+                                    <p:ajax event="blur"  process="@this" update=":criarVendaForm:bandeiraSelectOneMenu
+                                            :criarVendaForm:parcelamentoSelectOneMenu2"/>
+                                </p:autoComplete>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                <p:outputLabel value="Bandeira" for="bandeiraSelectOneMenu" />
+                                <p:selectOneMenu id="bandeiraSelectOneMenu" value="#{ managerCriarVenda.itemPagamento.bandeiraCartao }"
+                                                 converter="conversor">
+                                    <f:selectItems value="#{ managerCriarVenda.bandeiraDisponiveis() }" />
+                                    <p:ajax event="change"  process="@this" update=":criarVendaForm:parcelamentoSelectOneMenu2"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                <p:outputLabel value="Parcelamento" for="parcelamentoSelectOneMenu2" />
+                                <p:selectOneMenu id="parcelamentoSelectOneMenu2" value="#{managerCriarVenda.itemPagamento.itemJuros}"
+                                                 converter="conversor">
+                                    <f:selectItems value="#{ managerCriarVenda.parcelamentoDisponiveis() }" var="item" itemValue="#{item}" itemLabel="X #{item.parcelamento}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </h:panelGroup>
+                        <div class="command">
+                            <p:commandButton styleClass="ui-priority-primary" value="Adicionar" icon="ui-icon-disk" 
+                                             style="padding-bottom:0px!important;"
+                                             onclick="desabilitarBotao(this, true);"
+                                             oncomplete="desabilitarBotao(this, false);"
+                                             process="@this
+                                             :criarVendaForm:formaPagamentoSelectOneMenu
+                                             :criarVendaForm:valorPagamentoText
+                                             :criarVendaForm:itensPagamento
+                                             :criarVendaForm:panelMaquina"
+                                             update="@this
+                                             :criarVendaForm:finalizarVendaButton
+                                             :criarVendaForm:fecharVendaButton
+                                             :criarVendaForm:menuSlitButton
+                                             :criarVendaForm:codigoVendaOutputlabel
+                                             :criarVendaForm:formaPagamentoSelectOneMenu
+                                             :criarVendaForm:valorPagamentoText
+                                             :criarVendaForm:itensPagamento
+                                             :criarVendaForm:panelMaquina
+                                             :criarVendaForm:criarProdutoGrowl"
+                                             actionListener="#{managerCriarVenda.adicionarItemPagamento()}"/>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="padding: 0px">
+
+                                <p:panel id="itensPagamento" styleClass="noborder" style="padding:0px!important">
+
+                                    <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                         -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                         box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                        <div class="box-header with-border" style="text-align: center;">
+                                            <h3 class="box-title" >Items</h3>
+                                        </div>
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                            <div class="table-responsive">
+                                                <table class="table no-margin">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Forma pg.</th>
+                                                            <th>Valor</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <ui:repeat value="#{ managerCriarVenda.entidade.itensPagamento }" var="item">
+                                                            <tr>
+                                                                <td>
+                                                                    <p:commandButton title="Remover item"
+                                                                                     actionListener="#{managerCriarVenda.removerParcela(item)}"
+                                                                                     process="@this"
+                                                                                     update="@this
+                                                                                     :criarVendaForm:finalizarVendaButton
+                                                                                     :criarVendaForm:fecharVendaButton
+                                                                                     :criarVendaForm:menuSlitButton
+                                                                                     :criarVendaForm:codigoVendaOutputlabel
+                                                                                     :criarVendaForm:campoFieldsetPagamento
+                                                                                     :criarVendaForm:itensPagamento"
+                                                                                     icon="ui-icon-trash">
+                                                                    </p:commandButton>
+                                                                </td>
+                                                                <td>#{item.formaPagamento.nome }</td>
+                                                                <td><h:outputText value="#{ item.valor }" >
+                                                                        <f:convertNumber type="currency" locale="pt-BR"  />
+                                                                    </h:outputText></td>
+                                                            </tr>
+                                                        </ui:repeat>
+                                                        <tr>
+                                                            <td colspan="5">
+                                                                <p:outputLabel value="Nenhum item adicionado" rendered="#{empty managerCriarVenda.entidade.itemVenda}" />
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- /.table-responsive -->
+                                            <div class="box-footer clearfix">
+
+                                                <div class="row">
+
+                                                    <div class="col-md-12">
+                                                        <h:outputLabel value="Total Venda : "/>
+                                                        <h:outputLabel value="#{managerCriarVenda.entidade.valorTotal}">
+                                                            <f:convertNumber type="currency" locale="pt-BR"  />
+                                                        </h:outputLabel>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-2">
+                                                        <h:outputLabel value="Total Pago: " />
+                                                        <h:outputLabel value="#{managerCriarVenda.entidade.totalParcelas()}">
+                                                            <f:convertNumber type="currency" locale="pt-BR"  />
+                                                        </h:outputLabel>
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+
+                                                    <div class="col-md-12">
+                                                        <h:outputLabel value="Restante : "/>
+                                                        <h:outputLabel value="#{managerCriarVenda.entidade.valorTotal.subtract(managerCriarVenda.entidade.totalParcelas())}">
+                                                            <f:convertNumber type="currency" locale="pt-BR"  />
+                                                        </h:outputLabel>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:panel>
+
+                            </div>
+                        </div>
+                        <div class="command" style="margin-top:0px!important;">
+                            <p:commandButton styleClass="ui-priority-primary" value="Confirmar" icon="ui-icon-check" 
+                                             onclick="desabilitarBotao(this, true);"
+                                             oncomplete="desabilitarBotao(this, false);"
+                                             id="finalizarVendaButton"
+                                             disabled="#{managerCriarVenda.entidade.valorTotal.subtract(managerCriarVenda.entidade.totalParcelas()) gt 0 }"
+                                             process="@this, :criarVendaForm:campoFieldsetPagamento"
+                                             update="@this, :criarVendaForm:campoFieldsetPagamento"
+                                             actionListener="#{managerCriarVenda.fecharVenda()}"/>
+                            <p:commandButton process="@this" 
+                                             update="@this, :criarVendaForm:itensPagamento, :criarVendaForm:campoFieldsetPagamento"
+                                             actionListener="#{managerCriarVenda.removerParcelas()}"
+                                             value="Cancelar"
+                                             icon="ui-icon-close"  />
+                        </div>
+                    </p:fieldset>
+
+                </p:dialog>
+
+                <p:dialog id="exibirDetalhesItemDialog" widgetVar="exibirDetalhesItemDialog" header="Informações item" dynamic="true"
+                          closable="true" closeOnEscape="true"
+                          modal="true" appendTo="@this" resizable="false" width="80%" height="200px" draggable="false">
+
+                    <p:fieldset id="dadosItemFieldSet" >
+                        <div class="col-md-12" style="#{not empty managerCriarVenda.itemVisualizacao.itensAditivoVenda}">
+                            <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                <div class="box-header with-border" style="text-align: center;">
+                                    <h3 class="box-title" >Informações aditivos</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                                <tr>
+                                                    <th>Aditivo</th>
+                                                    <th>Valor Unitário</th>
+                                                    <th>Quantidade</th>
+                                                    <th>Valor Total</th>
+                                                    <th>Prazo devolução</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ui:repeat var="itemAditivo" value="#{managerCriarVenda.itemVisualizacao.itensAditivoVenda}" >
+                                                    <tr>
+                                                        <th>#{itemAditivo.produto.descricao}</th>
+                                                        <th><h:outputText value="#{ itemAditivo.valorUnitario }" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText></th>
+                                                        <th>#{itemAditivo.quantidade}</th>
+                                                        <th><h:outputText value="#{ itemAditivo.valorTotal}" >
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText></th>
+                                                        <th><h:outputText value="#{ itemAditivo.dataVencimento}" >
+                                                                <f:convertDateTime pattern="dd/MM/yyyy" locale="pt-BR"  />
+                                                            </h:outputText></th>
+                                                    </tr>
+                                                </ui:repeat>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="box box-info" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                 box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                <div class="box-header with-border" style="text-align: center;">
+                                    <h3 class="box-title" >Informações adicionais</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <div class="box-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><b>Inserido por</b></td>
+                                                    <td><h:outputText value="#{ managerCriarVenda.itemVisualizacao.usuarioCadastro.nome}" >
+                                                        </h:outputText></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td><b>Data</b></td>
+                                                    <td><h:outputText value="#{ managerCriarVenda.itemVisualizacao.dataAdicionado}" >
+                                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt"/>
+                                                        </h:outputText></td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.table-responsive -->
+                                </div>
+                            </div>
+                        </div>
+                    </p:fieldset>
+
+                    <f:facet  name="footer">
+
+                        <div class="command">
+                            <p:commandButton  styleClass="ui-priority-primary" process="@this" update="@this" value="Cancelar" onclick="exibirDetalhesItemDialog.hide();"
+                                              icon="ui-icon-close"  />
+                        </div>
+                    </f:facet>
+                </p:dialog>
+
+                <p:dialog id="confirmarFechamentoVenda" widgetVar="confirmarFechamentoVenda" header="Fechar a venda" dynamic="true"
+                          closable="true" closeOnEscape="true"
+                          modal="true" appendTo="@this" resizable="false" width="80%" height="200px" draggable="false">
+                    <p:outputLabel value="Deseja realmente fechar esta venda com o saldo devedor como crédito da loja ? "/>
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary" value="Confirmar" icon="ui-icon-disk" 
+                                         process="@this" update="@this" actionListener="#{managerCriarVenda.confirmarFechamentoVenda()}"/>
+                        <p:commandButton process="@this" update="@this" value="Cancelar" onclick="confirmarFechamentoVenda.hide();fecharVendaDialog.show();"
+                                         icon="ui-icon-close"  />
+                    </div>
+                </p:dialog>
+
+                <p:dialog id="clienteDialog" widgetVar="clienteDialog" header="Cliente" dynamic="true"
+                          closable="true" closeOnEscape="true"
+                          modal="true" appendTo="@this" resizable="false"  width="80%" height="400px"  draggable="false">
+
+                    <p:fieldset id="campoFieldsetCliente" >
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Nome" for="nomeInputText" />
+                                <p:inputText id="nomeInputText" value="#{ managerCriarVenda.clienteDialog.nome }"
+                                             required="true" requiredMessage="Nome é obrigatório" />
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Apelido" for="apelidoInputText" />
+                                <p:inputText id="apelidoInputText" value="#{ managerCriarVenda.clienteDialog.apelido }"
+                                             required="false" requiredMessage="Apelido é obrigatório" />
+                            </div>
+                        </div>
+                    </p:fieldset>
+                    <p:fieldset id="enderecoFieldset" style="margin-bottom: 10px">
+                        <h3 class="tituloFieldset">Endereço</h3>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="CEP" for="cepInputMask" />
+                                <p:inputMask id="cepInputMask" value="#{ managerCriarVenda.clienteDialog.endereco.cep }"
+                                             mask="99.999-999"/>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Tipo Endereço" for="tipoEnderecoSelectOneMenu" />
+                                <p:selectOneMenu id="tipoEnderecoSelectOneMenu" value="#{ managerCriarVenda.clienteDialog.endereco.tipo}">
+                                    <f:selectItems value="#{ enums.tipoEndereco() }"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Tipo Logradouro" for="tipoLogradouroSelectOneMenu" />
+                                <p:selectOneMenu id="tipoLogradouroSelectOneMenu" value="#{ managerCriarVenda.clienteDialog.endereco.tipoLogradouro}">
+                                    <f:selectItems value="#{ enums.tipoLogradouro() }"/>
+                                </p:selectOneMenu>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Logradouro" for="logradouroInputText" />
+                                <p:inputText id="logradouroInputText" value="#{ managerCriarVenda.clienteDialog.endereco.logradouro }"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Número" for="numeroEnderecoInputText" />
+                                <p:inputText id="numeroEnderecoInputText" value="#{ managerCriarVenda.clienteDialog.endereco.numero }"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Cidade" for="cidadeAutocomplete" />
+                                <p:autoComplete id="cidadeAutocomplete" value="#{ managerCriarVenda.clienteDialog.endereco.cidade }"
+                                                forceSelection="true" completeMethod="#{ managerAutocomplete.cidade }"
+                                                var="tipo" itemValue="#{tipo}" itemLabel="#{ tipo.nome }"
+                                                panelStyleClass="autocomplete_dialog"
+                                                dropdown="true" emptyMessage="Nenhum resultado encontrado" converter="conversor">
+                                    <p:ajax event="itemSelect" update="bairroAutocomplete" process="@this"  />
+                                    <p:ajax event="change" update="bairroAutocomplete" process="@this" />
+                                </p:autoComplete>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <p:outputLabel value="Bairro" for="bairroAutocomplete" />
+                                <p:autoComplete id="bairroAutocomplete" value="#{ managerCriarVenda.clienteDialog.endereco.bairro }"
+                                                forceSelection="true" completeMethod="#{ managerCriarVenda.bairro }"
+                                                disabled="#{managerCriarVenda.clienteDialog.endereco.cidade eq null}"
+                                                panelStyleClass="autocomplete_dialog"
+                                                var="tipo" itemValue="#{tipo}" itemLabel="#{ tipo.nome }"
+                                                dropdown="true" emptyMessage="Nenhum resultado encontrado" converter="conversor"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <p:outputLabel value="Localidade" for="localidadeInputText" />
+                                <p:inputText id="localidadeInputText" value="#{ managerCriarVenda.clienteDialog.endereco.localidade }"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <p:outputLabel value="Complemento" for="complementoInputTextarea" />
+                                <p:inputTextarea id="complementoInputTextarea" value="#{ managerCriarVenda.clienteDialog.endereco.complemento }"/>
+                            </div>
+                        </div>
+
+                    </p:fieldset>
+                    <f:facet name="footer">
+
+                        <div class="command">
+                            <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" 
+                                             process="@this
+                                             :criarVendaForm:campoFieldsetCliente 
+                                             :criarVendaForm:enderecoFieldset"
+                                             actionListener="#{managerCriarVenda.salvarCliente()}" update="@this, :criarVendaForm:clienteInputText, :criarVendaForm:campoFieldset"/>
+                            <p:commandButton process="@this" update="@this" value="Cancelar" onclick="clienteDialog.hide();"
+                                             icon="ui-icon-close"  />
+                        </div>
+                    </f:facet>
+                </p:dialog>
+
+                <p:dialog header="Deseja realmente CANCELAR ESTA VENDA ?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div style="font-size:1.3em">
+                        Ao cancelar esta venda você ira retorna todos os itens desta venda ao estoque.
+                    </div>
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton id="confirmarCancelamentoButton"
+                                             value="Sim" 
+                                             onclick="desabilitarBotao(this, true);"
+                                             oncomplete="desabilitarBotao(this, false);"
+                                             icon="ui-icon-check" actionListener="#{ managerCriarVenda.cancelarVenda() }" process="@this">
+                                <script>
+                                    desabilitarBotaoPorTempoDeterminado('criarVendaForm:confirmarCancelamentoButton', 5);
+                                </script>
+                            </p:commandButton>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog> 
+                <p:dialog header="Deseja realmente converter em uma venda?" widgetVar="converterEmVendaDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check" actionListener="#{ managerCriarVenda.converterOrcamentoEmVenda() }" process="@this"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="converterEmVendaDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

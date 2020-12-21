@@ -1,0 +1,78 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="title">
+            Relatórios - Venda
+        </ui:define>
+        <ui:define name="titulo">
+            Relatórios - Venda
+        </ui:define>
+        <ui:define name="content">
+
+            <script>
+                $('#relatoriosMenu').addClass('active');
+            </script>
+            <h:form id="relatorioVendaForm" target="_blank" >
+                <p:growl id="criarProdutoGrowl" autoUpdate="true" />
+                <p:fieldset id="campoFieldset" >
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <p:outputLabel value="Tipo" for="tipoSelectOneMenu" />
+
+                        <p:selectOneMenu id="tipoSelectOneMenu" value="#{ managerRelatorioVenda.relatorioVenda}"
+                                         required="false" requiredMessage="Tipo é obrigatório">
+                            <f:selectItems value="#{ enums.relatoriosVenda()}" />
+                            <p:ajax update="relatorioPorPeriodoCampos
+                                    relatorioPorClientesCampos"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <p:panel id="relatorioPorPeriodoCampos" styleClass="noborder" 
+                             style="margin-left: -18px;">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Data inicial" />
+                            <p:calendar id="dataInicialCalendar"
+                                        value="#{managerRelatorioVenda.dataInicial}"
+                                        showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Data Final" />
+                            <p:calendar id="dataFinalCalendar"
+                                        value="#{managerRelatorioVenda.dataFinal}"
+                                        showOn="button" pattern="dd/MM/yyyy" locale="pt" navigator="true" yearRange="1900:c"  />
+                        </div>
+                    </p:panel>
+
+                    <p:panel id="relatorioPorClientesCampos" styleClass="noborder" style="margin-left: -18px;display: #{managerRelatorioVenda.relatorioVenda eq 'VENDAS_POR_CLIENTE' ? '' : 'none'}">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <p:outputLabel value="Cliente" for="clienteInputText" />
+                            <p:autoComplete id="clienteInputText" value="#{ managerRelatorioVenda.cliente}" scrollHeight="200"
+                                            forceSelection="true" dropdown="true" var="cliente" itemValue="#{ cliente }" 
+                                            itemLabel="#{ cliente.nome }" completeMethod="#{ managerAutocomplete.autocompleteCliente}"
+                                            converter="conversor" minQueryLength="3" >
+                            </p:autoComplete>
+                        </div>
+                    </p:panel>
+
+
+                </p:fieldset >
+
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Gerar" 
+                                     icon="ui-icon-print" actionListener="#{managerRelatorioVenda.buscarDadosRelatorio()}" />
+
+                    <p:commandButton  style="display: none"
+                                      actionListener="#{managerRelatorioVenda.gerarRelatorio()}"
+                                      styleClass="ui-priority-primary"
+                                      target="_blank" ajax="false" immediate="true"
+                                      widgetVar="printButton"
+                                      icon="ui-icon-disk" />
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

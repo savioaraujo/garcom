@@ -1,0 +1,562 @@
+
+.ui-datepicker-trigger{
+    height: 30px !important;
+}
+
+/*span autocomplete*/
+.ui-autocomplete{
+    display: inline !important;
+    position: unset !important;
+}
+
+/*input do autocomplete/calendar*/
+.ui-autocomplete-input,
+.ui-inputfield.ui-widget.ui-state-default.ui-corner-all.hasDatepicker{
+    border-color: #d2d6de !important;
+    box-shadow: none !important;
+    border-radius: 0px 4px 3px 0px;
+    width: 100%;
+}
+.ui-inputfield.ui-inputmask.ui-widget.ui-state-default.ui-corner-all{
+    width: 100%;
+}
+
+div.col-sm-10 span.ui-autocomplete input.ui-autocomplete-input{
+    width: 100%
+}
+
+.ui-button.ui-widget.ui-state-default.ui-corner-right.ui-button-icon-only{
+    display: inline !important;
+    right: 0px;
+    margin-right: 15px;
+    height: 32px;
+    position: absolute;
+    border-radius: 0px 4px 3px 0px;
+}
+
+/*Botoes do autocomplete/calendar*/
+.ui-autocomplete-dropdown:hover,
+.ui-autocomplete-dropdown:active,
+.ui-autocomplete-dropdown.hover,
+.ui-datepicker-trigger.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-icon-only:hover,
+.ui-datepicker-trigger.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-icon-only:active,
+.ui-datepicker-trigger.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-icon-only.hover{
+    background-color: #e7e7e7 !important;
+    border-color: #adadad !important;
+}
+
+.pf-calendar input, .ui-selectonemenu-label, .ui-autocomplete-input{
+    font-family: Arial,​sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    font-size-adjust: none !important;
+    color: #555 !important;
+    line-height: 18px !important;
+    padding-top: 6px !important;
+    padding-right: 12px !important;
+    padding-bottom: 6px !important;
+    padding-left: 12px !important;
+
+}
+
+
+.ui-autocomplete-dropdown,
+.ui-selectcheckboxmenu-trigger.ui-state-default.ui-corner-right,
+.ui-selectonemenu-trigger.ui-state-default.ui-corner-right{
+    /*-moz-user-select: none !important;*/
+    background-color: #f4f4f4 !important;
+    background-image: none !important;
+    border: 1px solid #ddd !important;
+    border-radius: 3px !important;
+    box-shadow: none !important;
+    color: #444 !important;
+    /*cursor: pointer !important;*/
+    /*display: inline-block !important;*/
+    /*font-size: 14px !important;*/
+    /*font-weight: 400 !important;*/
+    margin-left: -18px;
+    height: 32px !important;
+    /*line-height: 1.42857 !important;*/
+    /*margin-bottom: 0 !important;*/
+    /*padding: 6px 12px !important;*/
+    position: absolute !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    width: 32px !important;
+}
+
+.ui-selectonemenu-trigger.ui-state-default.ui-corner-right{
+    border-color: #d2d6de !important;
+    margin-right: -1px !important;
+    margin-top: -1px !important;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default{
+    /*border-color: #d2d6de !important;*/
+    /*border-radius: 0 !important;*/
+    box-shadow: none !important;
+}
+
+.ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield{
+    box-shadow: none !important;
+}
+
+/*SelectOneMenu (div)*/
+.ui-selectcheckboxmenu.ui-widget.ui-state-default.ui-corner-all,
+.ui-selectonemenu.ui-widget.ui-state-default.ui-corner-all{
+    border-radius: 0 !important;
+    width: 100% !important;
+}
+
+/*Label do selectOneMenu*/
+.ui-selectonemenu-label.ui-inputfield.ui-corner-all{
+    border-radius: 0px !important;
+    width: 100% !important;
+}
+
+/*Span(icone) do selectOneMenu*/
+div.ui-selectcheckboxmenu-trigger.ui-state-default.ui-corner-right span.ui-icon.ui-icon-triangle-1-s,
+div.ui-selectonemenu-trigger.ui-state-default.ui-corner-right span.ui-icon.ui-icon-triangle-1-s,
+.ui-selectonemenu.ui-selectonemenu-trigger.ui-icon {
+    margin-left: 15% !important;
+    margin-top: 30% !important;
+}
+
+/*item selecionado do selectOneMenu*/
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background: #aaaaaa none repeat scroll 0 0 !important;
+    border-radius: 0 !important;
+    text-shadow: 0px 0px 0px #fff;
+}
+
+/*SelectOneRadio/ManyCheakBox*/
+.ui-selectmanycheckbox.ui-widget,
+.ui-selectoneradio.ui-widget{
+    margin-top: 2px
+}
+
+/*Opçao (div)/ Label*/
+.ui-radiobutton.ui-widget, 
+.ui-selectoneradio.ui-widget label,
+.ui-chkbox.ui-widget,
+.ui-selectmanycheckbox.ui-widget label{
+    margin-right: 10px !important
+}
+
+/*Opcao selecionada*/
+/*.ui-state-active .ui-icon {
+    margin-left: -0.3px;
+    margin-top: -1px;
+}*/
+
+/*BooleanCheckBox*/
+.ui-chkbox.ui-widget{
+    margin-top: 7px
+}
+
+.ui-radiobutton-box,
+.ui-chkbox-box,
+.ui-selectcheckboxmenu,
+.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only,
+.ui-selectmanybutton div,
+.ui-selectonebutton div{
+    background: #fff !important;
+}
+
+.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only{
+    color: #fff !important;
+    background-color: #DD4B39 !important;
+}
+.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.ui-state-active{
+    color: #fff !important;
+    background-color: #00A65A !important;
+}
+
+.ui-selectcheckboxmenu div.ui-selectcheckboxmenu-trigger.ui-state-default.ui-corner-right{
+    height: 33px !important;
+    margin-right: -1px !important;
+    margin-top: -1px !important;
+}
+.ui-selectcheckboxmenu{
+    height: 33px !important
+}
+
+.ui-widget-header.ui-corner-all.ui-selectcheckboxmenu-header.ui-helper-clearfix{
+    border-radius: 1px !important
+}
+
+.ui-selectcheckboxmenu-label.ui-corner-all.ui-state-hover{
+    border-radius: 0px;
+    box-shadow: 0 0 0 #85b2cb, 0 0 0 #fff inset;
+    padding: 3px 26px 6px 5px;
+}
+
+.ui-selectcheckboxmenu-label.ui-state-hover{
+    color: #fff !important;
+    box-shadow: 0 0 0 #85b2cb, 0 0 0 #fff inset;
+}
+
+.ui-selectonebutton div.ui-state-active,
+.ui-selectmanybutton div.ui-state-active{
+    background-color: #F4F4F4 !important;
+}
+
+
+/* label required */
+label span.ui-outputlabel-rfi {
+    float: right;
+    margin-left: 0.2em !important;
+    margin-right: -12px;
+}
+
+.ui-outputlabel-rfi{
+    color: #FF0000;
+}
+
+
+.ui-widget {
+    font-size: 1em !important;
+}
+
+.btn{
+    height: 35px !important;
+    min-width: 130px !important;
+}
+
+.btn span.ui-button-text.ui-c{
+    padding-top: 0.1em !important;
+}
+
+.center{
+    text-align: center !important;
+}
+
+.ui-button-icon-only{
+    width: 2.1em
+}
+
+.ui-datatable tbody tr {
+    line-height: 0.7 !important;
+}
+
+.splitButtonImprimirMatricula button:nth-child(2) span:first-child{
+    color: #fff
+}
+.splitButtonImprimirMatricula button:nth-child(2) {
+
+    background-color: #00c0ef;
+    background-image: none;
+    border-left-color: #fff;
+    color: #fff;
+    float: right;
+    height: 35px;
+    width: 35px;
+
+}
+.splitButtonImprimirMatricula button:first-child span.ui-button-text.ui-c{
+    padding: 0.1em 1em 0.3em 2.1em;
+}
+
+.splitButtonImprimirMatricula button:first-child span{
+    color: #fff
+}
+
+.splitButtonImprimirMatricula button:first-child{
+    -moz-user-select: none;
+    background-color: #00c0ef;
+    background-image: none;
+    border: 1px solid transparent;
+    border-color: #00acd6;
+    border-radius: 3px 0 0 0;
+    box-shadow: none;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    height: 35px !important;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    min-width: 130px !important;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.btn-dialog {
+    -moz-user-select: none !important;
+    background-image: none !important;
+    border: 1px solid transparent !important;
+    border-radius: 3px !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    height: 35px !important;
+    line-height: 1.42857 !important;
+    margin-bottom: 0 !important;
+    min-width: 130px !important;
+    padding: 6px 12px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+.btn-dialog span:nth-child(2){
+    padding: 0.1em 1em 0.3em 2.1em;
+}
+
+.btn-search-dialog {
+    background-color: #00c0ef !important;
+    border-color: #00acd6 !important;
+    color: #fff !important;
+}
+
+.btn-close-dialog {
+    background-color: #f4f4f4 !important;
+    border-color: #ddd !important;
+    color: #444 !important;
+}
+
+.btn-app{
+    min-width: 80px !important;
+    height: 60px !important;
+}
+
+.btn-app.menu{
+    min-width: 120px !important;
+    height: 100px !important;
+}
+
+.icon.major {
+    text-align: center;
+    cursor: pointer;
+    background-color: #37c0fb;
+    color: #fff;
+    border-radius: 100%;
+    display: inline-block;
+    width: 5em;
+    height: 5em;
+    line-height: 5em;
+    box-shadow: 0 0 0 7px white, 0 0 0 8px #e0e0e0;
+    margin: 2em 0 0em 0;
+}
+
+.link_menu_icon{
+    text-align: center;
+    cursor: pointer
+}
+
+/*PRIMEFACES ADJUSTS*/
+.ui-inputfield.ui-inputtext{
+    width:100%;
+
+}
+
+textArea{
+    width:100%;
+}
+
+
+.command {
+    display: inline-block;
+    clear: both;
+    margin: 20px 0 0;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.ui-dialog-footer.ui-widget-content > span > div.command{
+    margin: 10px 0;
+}
+
+.command button, .command input {
+    margin: 0 10px;
+    min-width: 140px
+}
+
+.command .ui-fileupload {
+    display: inline-block
+}
+
+.commandDialog {
+    display: inline-block;
+    margin: 10px 0;
+    text-align: center;    
+    width: 100%
+}
+
+.commandDialog button {
+    margin: 0 10px !important;
+    width: 140px !important
+}
+
+
+
+.actions .button {
+    min-width: 100px
+}
+
+.actions .ui-splitbutton {
+    margin: 0 35px 0 10px;
+}
+
+.actions .ui-splitbutton button:nth-child(1) {
+    background: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    background: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+    cursor: default
+}
+
+
+
+#full_content .actions {
+    padding-right: 1em
+}
+
+.actions {
+    display: inline-block;
+    padding: 1em 0;
+    width: 100%;
+    text-align: right
+}
+
+.actions .button {
+    min-width: 100px
+}
+
+.actions .ui-splitbutton {
+    margin: 0 25px 0 10px;
+}
+
+.actions .ui-splitbutton button:nth-child(1) {
+    background: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    background: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+    height: 32px;
+    cursor: default
+}
+
+.row{
+    margin-right: 0 !important;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+
+.noborder {
+    background: transparent;
+    border: none;
+    display: inline-block;
+    margin: 0;
+    width: 100%
+}
+
+.noborder_row {
+    background: transparent;
+    border: none;
+    display: block;
+    margin: 0
+}
+
+
+.ui-growl-item{
+    margin-top:35px;
+
+}
+
+.ui-growl.ui-widget{
+    z-index: 1071!important
+}
+
+.text {
+    min-height: 20px;
+    font-style: normal!important;
+}
+
+.bold-table {
+    text-align: right;
+    font-weight: bold
+}
+
+.text label, .text-table {
+    text-align: left !important;
+    font-weight: normal!important;
+}
+
+
+.bold {
+    font-weight: bold
+}
+
+.bold label {
+    float:right;
+}
+
+.ui-datepicker-trigger.ui-button ui-widget.ui-state-default.ui-corner-all.ui-button-icon-only{
+    margin-left: -18px;
+}
+
+.ui-selectonemenu-panel.ui-widget-content.ui-corner-all.ui-helper-hidden.ui-shadow{
+    z-index: 2000!important;    
+}
+
+.ui-selectonemenu.ui-widget.ui-state-default.ui-corner-all.ui-helper-clearfix{
+    outline: none !important;
+}
+
+.ui-selectonemenu-trigger.ui-state-default.ui-corner-right{
+    outline: none !important;
+}
+
+.ui-inputfield.ui-widget.ui-state-default.ui-corner-all.hasDatepicker{
+    border-color: #d2d6de !important;
+    box-shadow: none !important;
+    border-radius: 4px 4px 3px 4px;
+    width: 100%;
+    height: 30px !important;
+}
+
+
+.ui-datepicker-trigger.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-icon-only{
+
+    display: inline !important;
+    right: 0px;
+    margin-right: 15px;
+    height: 32px;
+    position: absolute;
+    border-radius: 0px 4px 3px 0px;
+}
+
+* > .margin-top{
+    margin-top: 24px;
+}
+.text-label, .bold-label{
+    width:100%;
+    text-align: left!important;
+}
+.text-label{
+    font-weight: normal;
+}
+
+h3.tituloFieldset{
+    border-bottom: 1px solid #ccc !important;
+    margin-bottom: 20px !important;
+}
+
+.ui-fieldset{
+    margin-top: 10px;
+}
+
+.autocomplete_dialog{
+    z-index:1100!important;
+}
+
+.ui-spinner-input, .ui-spinner, .ui-password{
+    width:100%!important;
+}
+
+.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-shadow.ui-overlay-visible{
+    z-index: 1050!important;
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="item_pagamento_venda" pageWidth="143" pageHeight="802" columnWidth="143" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="7f1dbd22-3ac7-4268-988b-9d5c2cfef61d">
+	<property name="ireport.zoom" value="3.1384283767210044"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="formaPagamento.nome" class="java.lang.String"/>
+	<field name="valor" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement uuid="38a91119-2109-446a-b972-0faddbc0b811" x="0" y="0" width="83" height="10"/>
+				<textElement>
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{formaPagamento.nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="e639d952-ef1d-433c-bb2d-02f612347483" x="83" y="0" width="60" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="5fa33b42-c5d2-49ae-a04b-8cebf2ff5ec7" x="0" y="9" width="143" height="1">
+					<printWhenExpression><![CDATA[$V{COLUMN_NUMBER}==$V{COLUMN_COUNT}]]></printWhenExpression>
+				</reportElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

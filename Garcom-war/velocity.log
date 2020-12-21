@@ -1,0 +1,71 @@
+2020-08-07 18:57:03,096 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2020-08-07 18:57:03,099 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2020-08-07 18:57:03,101 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2020-08-07 18:57:03,102 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2020-08-07 18:57:03,145 - Created '20' parsers.
+2020-08-07 18:57:03,154 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2020-08-07 18:57:03,154 - Velocimacro : Default library not found.
+2020-08-07 18:57:03,154 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2020-08-07 18:57:03,154 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2020-08-07 18:57:03,154 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2020-08-07 18:57:03,154 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2020-08-07 18:57:03,167 - ResourceManager : found template/service.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,183 - ResourceManager : found template/criar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,202 - ResourceManager : found template/components/input.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,210 - ResourceManager : found template/visualizar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,211 - ResourceManager : found template/components/text/text.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,228 - ResourceManager : found template/index.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,229 - ResourceManager : found template/components/input.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,231 - ResourceManager : found template/components/column/column.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,233 - ResourceManager : found template/managers/managerCadastrar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-07 18:57:03,235 - ResourceManager : found template/managers/managerPesquisar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:01,965 - Log4JLogChute initialized using file 'velocity.log'
+2020-08-11 11:11:01,965 - Initializing Velocity, Calling init()...
+2020-08-11 11:11:01,965 - Starting Apache Velocity v1.7 (compiled: 2010-11-19 12:14:37)
+2020-08-11 11:11:01,965 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2020-08-11 11:11:01,965 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2020-08-11 11:11:01,966 - Target log system for org.apache.velocity.runtime.log.AvalonLogChute is not available (java.lang.NoClassDefFoundError: org/apache/log/format/Formatter).  Falling back to next log system...
+2020-08-11 11:11:01,966 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2020-08-11 11:11:01,966 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2020-08-11 11:11:01,973 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:01,975 - Do unicode file recognition:  false
+2020-08-11 11:11:01,975 - FileResourceLoader : adding path '.'
+2020-08-11 11:11:01,985 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl) with class java.util.Collections$SynchronizedMap cache map.
+2020-08-11 11:11:01,986 - Loaded System Directive: org.apache.velocity.runtime.directive.Stop
+2020-08-11 11:11:01,987 - Loaded System Directive: org.apache.velocity.runtime.directive.Define
+2020-08-11 11:11:01,987 - Loaded System Directive: org.apache.velocity.runtime.directive.Break
+2020-08-11 11:11:01,988 - Loaded System Directive: org.apache.velocity.runtime.directive.Evaluate
+2020-08-11 11:11:01,989 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2020-08-11 11:11:01,990 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2020-08-11 11:11:01,991 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2020-08-11 11:11:01,992 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2020-08-11 11:11:01,993 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2020-08-11 11:11:02,017 - Created '20' parsers.
+2020-08-11 11:11:02,024 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2020-08-11 11:11:02,024 - Velocimacro : Default library not found.
+2020-08-11 11:11:02,024 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2020-08-11 11:11:02,024 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2020-08-11 11:11:02,024 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2020-08-11 11:11:02,024 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2020-08-11 11:11:02,034 - ResourceManager : found template/service.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,053 - ResourceManager : found template/criar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,063 - ResourceManager : found template/components/calendar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,067 - ResourceManager : found template/components/calendar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,068 - ResourceManager : found template/components/input.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,070 - ResourceManager : found template/components/input.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,077 - ResourceManager : found template/visualizar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,078 - ResourceManager : found template/components/text/text_date.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,079 - ResourceManager : found template/components/text/text_date.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,079 - ResourceManager : found template/components/text/text.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,080 - ResourceManager : found template/components/text/text.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,095 - ResourceManager : found template/index.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,097 - ResourceManager : found template/components/calendar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,098 - ResourceManager : found template/components/calendar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,100 - ResourceManager : found template/components/input.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,103 - ResourceManager : found template/components/input.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,105 - ResourceManager : found template/components/column/column_date.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,106 - ResourceManager : found template/components/column/column_date.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,107 - ResourceManager : found template/components/column/column.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,109 - ResourceManager : found template/components/column/column.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,114 - ResourceManager : found template/managers/managerCadastrar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2020-08-11 11:11:02,120 - ResourceManager : found template/managers/managerPesquisar.vm with loader org.apache.velocity.runtime.resource.loader.FileResourceLoader

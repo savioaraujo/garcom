@@ -1,0 +1,7 @@
+
+				<div class="row">
+				    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+						<p:outputLabel  styleClass="bold-label" value="${fieldNameUpper}:"/>
+						<p:outputLabel  styleClass="text-label" value="#{ manager${operation}${entityNameUpper}.entidade.${fieldNameLower} }" />
+				    </div>
+				</div>

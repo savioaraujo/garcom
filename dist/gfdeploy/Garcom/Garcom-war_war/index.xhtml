@@ -1,0 +1,180 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="titulo">
+            <!--Page Header-->
+        </ui:define>
+        <ui:define name="subtitulo">
+            <!--Subtitulo-->
+        </ui:define>
+
+        <ui:define name="content">
+            <h:form id="indexForm" >
+                <p:growl id="indexGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar Vendas" outcome="pesquisarVenda.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+                <p:panel id="vendasIndexPanel" rendered="#{not empty managerPrincipal.vendasAbertas()}">
+
+                    <div class="row">
+
+                        <ui:repeat value="#{ managerPrincipal.vendasAbertas() }" var="venda">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+                                <div class="box box-solid" style="-webkit-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                     -moz-box-shadow: -1px 12px 44px -1px rgba(188,189,204,1);
+                                     box-shadow: -1px 0px 10px 0px rgba(188,189,204,1);">
+                                    <div class="box-body" style="pading: 10px 10px 0px 10px">
+                                        <h4 style="background-color:#f7f7f7; font-size: 18px; text-align: center; padding: 7px 10px; margin-top: 0;">
+                                            Venda #{venda.codigo}
+
+                                            <!--                                            <div class="dropdown notifications-menu" style="float:right">
+                                                                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                                                                <i class="fa fa-bars"></i>
+                                                                                            </a>
+                                                                                            <ul class="dropdown-menu" style="margin-left: -134px;">
+                                                                                                <li>
+                                                                                                     inner menu: contains the actual data 
+                                                                                                    <ul class="menu">
+                                                                                                        <li style="margin-bottom: 5px">
+                                                                                                            <h:outputLink value="frenteCaixa.xhtml?id=#{venda.id}">
+                                                                                                                <i class="fa fa-pencil"></i> Editar
+                                                                                                            </h:outputLink>
+                                                                                                        </li>
+                                                                                                        <li style="margin-bottom: 5px">
+                                                                                                            <p:commandLink title="Remover venda" process="@this"
+                                                                                                                           onclick="confirmarRemocaoVenda.show()">
+                                                                                                                <i class="fa fa-trash"></i>Excluir
+                                                                                                                <f:setPropertyActionListener target="#{ managerPrincipal.vendaRemocao }" value="#{ venda }" />
+                                                                                                            </p:commandLink>
+                                                                                                        </li>
+                                                                                                    </ul>
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>-->
+                                        </h4>
+                                        <a href="#{venda.aberta ? 'frenteCaixa' : 'visualizarVenda'}.xhtml?id=#{venda.id}">
+                                            <div class="media bg-blue">
+                                                <div class="media-left">
+                                                    <span class="info-box-icon bg-blue"><i class="fa fa-shopping-cart"></i></span>
+                                                </div>
+                                                <div class="media-body">
+                                                    <div class="clearfix">
+                                                        <h3 style="margin-top: 0">#{venda.cliente.apelido ne null ? venda.cliente.apelido : venda.cliente.nome}</h3>
+
+                                                        <p style="margin-bottom: 0">
+                                                            <h:outputText value="#{venda.valorTotal}">
+                                                                <f:convertNumber type="currency" locale="pt-BR"  />
+                                                            </h:outputText>
+                                                        </p>
+                                                        <h6><h:outputText value="#{venda.dataAbertura}">
+                                                                <f:convertDateTime pattern="dd/MM/yyyy hh:mm" locale="pt"/>
+                                                            </h:outputText></h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <div class="small-box bg-blue">
+                                            <p:commandLink process="@this" styleClass="small-box-footer" style="padding: 7px 10px; margin-top: 0;"
+                                                           actionListener="#{managerPrincipal.pagar(venda)}">
+                                                Pagar <i class="fa fa-money"></i> 
+                                            </p:commandLink>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </p:panel>
+                <p:panel id="graficoVenda" rendered="#{false}">
+                    <canvas id="graficoVenda" width="400" height="100"></canvas>
+                    <script>
+                        var ctx = document.getElementById('graficoVenda').getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['01', '02', '03', '04', '05', '06'],
+                                datasets: [{
+                                        label: '# of Votes',
+                                        data: [12, 19, 3, 5, 2, 3],
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 99, 132, 0.2)'
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(255, 99, 132, 1)'
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                            },
+                            options: {
+                                scales: {
+                                    yAxes: [{
+                                            ticks: {
+                                                beginAtZero: true
+                                            }
+                                        }]
+                                }
+                            }
+                        });
+                    </script>
+                </p:panel>
+                <c:if test="#{not empty managerPrincipal.clientesInadimplentes()}">
+                    <h2>Clientes Inadimplentes</h2>
+                </c:if>
+                <p:panel id="clientesInadimplentesIndexPanel" rendered="#{not empty managerPrincipal.clientesInadimplentes()}">
+                    <div class="row">
+
+
+                        <ui:repeat value="#{ managerPrincipal.clientesInadimplentes() }" var="carteira">
+                            <div class="col-lg-3 col-xs-6">
+                                <!-- small box -->
+
+                                <div class="small-box bg-yellow">
+                                    <div class="inner">
+                                        <h3>#{carteira.proprietario.apelido eq null ? carteira.proprietario.nome : carteira.proprietario.apelido}</h3>
+
+                                        <p>inadimplente desde  
+                                            <h:outputText value="#{carteira.dataUltimaMovimentacaoNegativa}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" locale="pt"/>
+                                            </h:outputText>
+                                        </p>
+
+                                        <b>
+                                            <p>Saldo :
+                                                <h:outputText value="#{carteira.saldo}" >
+                                                    <f:convertNumber type="currency" locale="pt-BR"  />
+                                                </h:outputText>
+                                            </p>
+                                        </b>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-person"></i>
+                                    </div>
+                                    <a href="visualizarCliente.xhtml?id=#{carteira.proprietario.id}" class="small-box-footer">
+                                        Mais informações <i class="fa fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </p:panel>
+            </h:form>
+        </ui:define>
+
+        <!--<script src="media/plugins/jQuery/jQuery-2.1.4.min.js" type="text/javascript"></script>-->
+    </ui:composition>
+</html>

@@ -1,0 +1,63 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="titulo">
+            Cadastro de Bandeira Cartão
+        </ui:define>
+        
+        <ui:define name="content">
+
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="criarBandeiraCartaoForm" >
+                <p:growl id="criarBandeiraCartaoGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarBandeiraCartao.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <p:outputLabel value="Nome" for="nomeInputText" />
+                            <p:inputText id="nomeInputText" value="#{ managerCriarBandeiraCartao.entidade.nome }"
+                                         required="false" requiredMessage="Nome é obrigatório" />
+                        </div>
+                        
+                        <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+                            <p:outputLabel styleClass="bold-label" value="Crédito ?" for="creditoCheckBooleanButton" />
+                            <p:selectBooleanButton id="creditoCheckBooleanButton"
+                                                   value="#{ managerCriarBandeiraCartao.entidade.credito }"
+                                                   onLabel="Sim" offLabel="Não">
+                            </p:selectBooleanButton>
+                        </div>
+
+                        <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+                            <p:outputLabel styleClass="bold-label" value="Débito ?" for="debitoCheckBooleanButton" />
+                            <p:selectBooleanButton id="debitoCheckBooleanButton"
+                                                   value="#{ managerCriarBandeiraCartao.entidade.debito  }"
+                                                   onLabel="Sim" offLabel="Não">
+                            </p:selectBooleanButton>
+                        </div>
+                    </div>
+                </p:fieldset >
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" actionListener="#{managerCriarBandeiraCartao.salvar()}" update=":criarBandeiraCartaoForm:campoFieldset"/>
+                    <p:button rendered="#{managerCriarBandeiraCartao.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarBandeiraCartao.xhtml" />
+                    <p:button rendered="#{managerCriarBandeiraCartao.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarBandeiraCartao.xhtml?id=#{managerCriarBandeiraCartao.entidade.id}" />
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

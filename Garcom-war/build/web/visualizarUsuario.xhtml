@@ -1,0 +1,138 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="titulo">
+            Visualizar Usuário
+        </ui:define>
+
+        <ui:define name="content">
+           <script>
+                $('#configuracoesMenu').addClass('active');
+            </script>
+
+            <h:form id="visualizarUsuarioForm" >
+                <p:growl id="visualizarUsuarioGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+
+                        <p:button value="Cadastrar" outcome="criarUsuario.xhtml" icon="ui-icon-plus"
+                                  style="float:left;"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:button value="Pesquisar" outcome="pesquisarUsuario.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear">
+                            <p:menuitem value="Editar" icon="ui-icon-pencil" outcome="criarUsuario.xhtml">
+                                <f:param name="id" value="#{ managerPesquisarUsuario.entidade.id}"/>
+                            </p:menuitem>
+                            <p:menuitem value="Alterar Senha" icon="ui-icon-locked" oncomplete="alterarSenhaDialog.show();" process="@this" update="@this"/>
+                            <p:menuitem value="Excluir" icon="ui-icon-trash" oncomplete="deletarDialog.show();"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Nome:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarUsuario.entidade.nome }" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Login:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarUsuario.entidade.login }" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Email:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarUsuario.entidade.email }" />
+                        </div>
+                    </div>
+
+                </p:fieldset>
+                <p:fieldset id="grupoFieldset"  >
+                    <h3 class="tituloFieldset">Grupos</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <p:dataTable id="gruposDataTable" var="grupo" value="#{ managerPesquisarUsuario.entidade.group }"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="{currentPage} de {totalPages}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum grupo adicionado">
+
+                                <f:facet name="header" >
+                                    <p:outputLabel value="Grupos #{managerPesquisarUsuario.entidade.group.size() > 0 ? '('.concat(managerPesquisarUsuario.entidade.group.size()).concat(')'): ''}" />
+                                </f:facet>
+                                <p:column headerText="Grupo" >
+                                    <h:outputText value="#{ grupo.name }"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </p:fieldset>
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check" actionListener="#{ managerPesquisarUsuario.delete() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>
+
+                <p:dialog header="Alterar senha" widgetVar="alterarSenhaDialog" modal="true"
+                          height="200"
+                          closable="false" resizable="false" draggable="false" >
+                    <p:fieldset >
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:outputLabel value="Senha atual" for="senhaAtualInputText" />
+                                <p:password id="senhaAtualInputText" value="#{ managerPesquisarUsuario.senhaAtual }"
+                                            required="true" requiredMessage="Nome é obrigatório" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:outputLabel value="Nova senha" for="novaSenhaInputText" />
+                                <p:password id="novaSenhaInputText" value="#{ managerPesquisarUsuario.novaSenha }"
+                                            required="true" requiredMessage="Nome é obrigatório" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p:outputLabel value="Confirmação nova senha" for="confirmacaoNovaSenhaInputText" />
+                                <p:password id="confirmacaoNovaSenhaInputText" value="#{ managerPesquisarUsuario.confirmacaoSenha }"
+                                            required="true" requiredMessage="Nome é obrigatório" />
+                            </div>
+                        </div>
+                    </p:fieldset>
+                    <f:facet name="footer">
+
+                        <div class="row">
+                            <div class="command">
+                                <p:commandButton value="Salvar" icon="ui-icon-disk" actionListener="#{ managerPesquisarUsuario.alterarSenha() }"/>
+                                <p:commandButton value="Cancelar" icon="ui-icon-close" oncomplete="alterarSenhaDialog.hide()" process="@this"/>
+                            </div>
+                        </div>
+                    </f:facet>
+                </p:dialog>   
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

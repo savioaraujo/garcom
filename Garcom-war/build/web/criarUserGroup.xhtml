@@ -1,0 +1,167 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="titulo">
+            Cadastro de UserGroup
+        </ui:define>
+
+        <ui:define name="content">
+
+            <script>
+                $('#configuracoesMenu').addClass('active');
+            </script>
+            <h:form id="criarUserGroupForm" >
+                <p:growl id="criarUserGroupGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarUserGroup.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Name" for="nameInputText" />
+                            <p:inputText id="nameInputText" value="#{ managerCriarUserGroup.entidade.name }"
+                                         required="false" requiredMessage="Name é obrigatório" />
+                        </div>
+                    </div>
+                </p:fieldset >
+
+                <p:fieldset id="acessoFieldset"  >
+                    <h3 class="tituloFieldset">Acessos</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <p:outputLabel value="Módulo" for="moduloAutocomplete" />
+                            <p:autoComplete id="moduloAutocomplete" value="#{ managerCriarUserGroup.access.module }"
+                                            forceSelection="true" completeMethod="#{ managerAutocomplete.autocompleteModulos}"
+                                            var="item" itemValue="#{item}" itemLabel="#{ item.name }"
+                                            required="true" requiredMessage="Módulo é um campo obrigatório"
+                                            dropdown="true" emptyMessage="Nenhum resultado encontrado" converter="conversor">
+                            </p:autoComplete>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                            <p:outputLabel value="Salvar" for="salvarSelectBooleanButton" styleClass="bold-label"/>
+                            <p:selectBooleanButton id="salvarSelectBooleanButton" value="#{managerCriarUserGroup.access.save}"
+                                                   onLabel="Sim" offLabel="Não"  />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                            <p:outputLabel value="Editar" for="editarSelectBooleanButton" styleClass="bold-label"/>
+                            <p:selectBooleanButton id="editarSelectBooleanButton" value="#{managerCriarUserGroup.access.edit}"
+                                                   onLabel="Sim" offLabel="Não"  />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                            <p:outputLabel value="Deletar" for="deletarSelectBooleanButton" styleClass="bold-label"/>
+                            <p:selectBooleanButton id="deletarSelectBooleanButton" value="#{managerCriarUserGroup.access.remove}"
+                                                   onLabel="Sim" offLabel="Não"  />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                            <p:outputLabel value="Ver" for="verSelectBooleanButton" styleClass="bold-label"/>
+                            <p:selectBooleanButton id="verSelectBooleanButton" value="#{managerCriarUserGroup.access.show}"
+                                                   onLabel="Sim" offLabel="Não"  />
+                        </div>
+
+
+                    </div>
+                    <div class="command">
+                        <p:commandButton styleClass="ui-priority-primary" value="Adicionar" icon="ui-icon-plus" 
+                                         actionListener="#{managerCriarUserGroup.adicionarAcesso()}" 
+                                         process="@this, 
+                                         :criarUserGroupForm:acessoFieldset"
+                                         update="@this, 
+                                         :criarUserGroupForm:acessoFieldset"/>
+                        <p:commandButton value="Cancelar" icon="ui-icon-close"
+                                         actionListener="#{managerCriarUserGroup.instanciarAcesso()}" 
+                                         process="@this"
+                                         update="@this, 
+                                         :criarUserGroupForm:acessoFieldset" />
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <p:dataTable id="acessosDataTable" var="acesso" value="#{ managerCriarUserGroup.entidade.accesses }"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="{currentPage} de {totalPages}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum acesso adicionado">
+
+                                <f:facet name="header" >
+                                    <p:outputLabel value="Acessos #{managerCriarUserGroup.entidade.accesses.size() > 0 ? '('.concat(managerCriarUserGroup.entidade.accesses.size()).concat(')'): ''}" />
+                                </f:facet>
+
+                                <p:column headerText="Opções" width="10%" styleClass="options3">
+                                    <p:commandButton title="Editar telefone" icon="ui-icon-pencil"
+                                                     actionListener="#{managerCriarUserGroup.editarAcesso(acesso)}"
+                                                     disabled="#{managerCriarUserGroup.access eq acesso}"
+                                                     process="@this"
+                                                     update="@this, 
+                                                     :criarUserGroupForm:acessoFieldset"/>
+                                    <p:commandButton title="Remover telefone" icon="ui-icon-trash" 
+                                                     disabled="#{managerCriarUserGroup.access eq acesso}"
+                                                     onclick="removerAcessoDialog.show()" process="@this" update="@this" >
+                                        <f:setPropertyActionListener target="#{managerCriarUserGroup.accessRemocao}" value="#{acesso}" />
+                                    </p:commandButton>
+                                </p:column>  
+
+                                <p:column headerText="Módulo" >
+                                    <h:outputText value="#{ acesso.module.name }"/>
+                                </p:column>
+                                <p:column headerText="Criar" >
+                                    <h:outputText value="#{ acesso.save ? 'Sim' : 'Não'}"/>
+                                </p:column>
+                                <p:column headerText="Editar" >
+                                    <h:outputText value="#{ acesso.edit ? 'Sim' : 'Não'}"/>
+                                </p:column>
+                                <p:column headerText="Remover" >
+                                    <h:outputText value="#{ acesso.remove ? 'Sim' : 'Não'}"/>
+                                </p:column>
+                                <p:column headerText="Pesquisar" >
+                                    <h:outputText value="#{ acesso.find ? 'Sim' : 'Não'}"/>
+                                </p:column>
+                                <p:column headerText="Visualizar" >
+                                    <h:outputText value="#{ acesso.show ? 'Sim' : 'Não'}"/>
+                                </p:column>                               
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </p:fieldset>
+
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" 
+                                     process="@this, :criarUserGroupForm:campoFieldset"
+                                     actionListener="#{managerCriarUserGroup.salvar()}" update=":criarUserGroupForm:campoFieldset, :criarUserGroupForm:acessoFieldset"/>
+                    <p:button rendered="#{managerCriarUserGroup.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarUserGroup.xhtml" />
+                    <p:button rendered="#{managerCriarUserGroup.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarUserGroup.xhtml?id=#{managerCriarUserGroup.entidade.id}" />
+                </div>
+
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="removerAcessoDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check"
+                                             process="@this"
+                                             update="@this, 
+                                             :criarUserGroupForm:acessosDataTable"
+                                             oncomplete="removerAcessoDialog.hide()"
+                                             actionListener="#{ managerCriarUserGroup.removerAcesso() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="removerAcessoDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

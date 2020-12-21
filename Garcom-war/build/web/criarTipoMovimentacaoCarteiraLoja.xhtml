@@ -1,0 +1,55 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="title">
+            Cadastro de Tipo de Movimentação da Carteira Loja
+        </ui:define>
+
+        <ui:define name="titulo">
+            Cadastro de Tipo de Movimentação da Carteira Loja
+        </ui:define>
+
+        <ui:define name="content">
+
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="criarTipoMovimentacaoCarteiraLojaForm" >
+                <p:growl id="criarTipoMovimentacaoCarteiraLojaGrowl" autoUpdate="true" />
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarTipoMovimentacaoCarteiraLoja.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+                <p:fieldset id="campoFieldset" >
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Descrição" for="descricaoInputText" />
+                            <p:inputText id="descricaoInputText" value="#{ managerCriarTipoMovimentacaoCarteiraLoja.entidade.descricao }"
+                                         required="true" requiredMessage="Descrição é obrigatório" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Tipo" for="tipoSelectOneMenu" />
+
+                            <p:selectOneMenu id="tipoSelectOneMenu" value="#{ managerCriarTipoMovimentacaoCarteiraLoja.entidade.tipo}"
+                                             required="false" requiredMessage="Tipo é obrigatório">
+                                <f:selectItems value="#{ enums.tipoMovimentacaos() }" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </p:fieldset >
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" actionListener="#{managerCriarTipoMovimentacaoCarteiraLoja.salvar()}" update=":criarTipoMovimentacaoCarteiraLojaForm:campoFieldset"/>
+                    <p:button rendered="#{managerCriarTipoMovimentacaoCarteiraLoja.entidade.id eq null}" value="Cancelar" icon="ui-icon-close" outcome="pesquisarTipoMovimentacaoCarteiraLoja.xhtml" />
+                    <p:button rendered="#{managerCriarTipoMovimentacaoCarteiraLoja.entidade.id ne null}" value="Cancelar" icon="ui-icon-close" outcome="visualizarTipoMovimentacaoCarteiraLoja.xhtml?id=#{managerCriarTipoMovimentacaoCarteiraLoja.entidade.id}" />
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

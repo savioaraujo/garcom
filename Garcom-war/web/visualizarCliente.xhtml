@@ -1,0 +1,213 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Visualizar Cliente
+        </ui:define>
+
+        <ui:define name="titulo">
+            Visualizar Cliente
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="visualizarClienteForm" >
+                <p:growl id="visualizarClienteGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarCliente.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear">
+                            <p:menuitem value="Editar" icon="ui-icon-pencil" outcome="criarCliente.xhtml">
+                                <f:param name="id" value="#{ managerPesquisarCliente.entidade.id}"/>
+                            </p:menuitem>
+                            <p:menuitem value="Excluir" icon="ui-icon-trash" oncomplete="deletarDialog.show();"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">Dados</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Tipo:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarCliente.entidade.tipo.descricao}" />
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Habilitar Pagamento de Funcionário?:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarCliente.entidade.habilitaPagamentoFuncionario ? 'Sim' : 'Não'}" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Nome:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarCliente.entidade.nome }" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Apelido:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarCliente.entidade.apelido }" />
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Data de Nascimento:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarCliente.entidade.dataNascimento }" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="pt"/>
+                            </p:outputLabel>
+                        </div>
+                    </div>
+
+
+
+                </p:fieldset>
+
+                <p:fieldset id="documentacaoFieldset">
+                    <h3 class="tituloFieldset">Documentação</h3>
+
+                    <p:dataTable id="documentosDataTable" var="item" value="#{ managerPesquisarCliente.entidade.documentos }"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="{currentPage} de {totalPages}" rowsPerPageTemplate="5,10,15"
+                                 rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                        <f:facet name="header" >
+                            <p:outputLabel value="Documentos #{managerPesquisarCliente.entidade.documentos.size() > 0 ? '('.concat(managerPesquisarCliente.entidade.documentos.size()).concat(')'): ''}" />
+                        </f:facet>
+                        <p:column headerText="Tipo" >
+                            <h:outputText value="#{ item.tipoDocumento.descricao}"/>
+                        </p:column>
+                        <p:column headerText="Número" >
+                            <h:outputText value="#{ item.numero}"/>
+                            <ui:repeat value="#{ item.subCampos }" var="subCampo" varStatus="status">
+                                <h:outputText value=" #{ subCampo.valor}" />
+                            </ui:repeat>
+                        </p:column>
+                        <p:column headerText="Data do documento" >
+                            <h:outputText value="#{ item.dataDocumento}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" locale="pt"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </p:fieldset>
+
+                <p:fieldset id="enderecoFieldset" style="margin-bottom: 10px">
+                    <h3 class="tituloFieldset">Endereço</h3>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel styleClass="bold-label" value="CEP:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.cep }" />
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel styleClass="bold-label" value="Tipo Logradouro:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.tipoLogradouro.nome }" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel styleClass="bold-label" value="Tipo Endereço:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.tipo.nome }" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <p:outputLabel styleClass="bold-label" value="Logradouro:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.logradouro }" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel styleClass="bold-label" value="Número:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.numero }" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel styleClass="bold-label" value="Cidade:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.cidade.nome }" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel styleClass="bold-label" value="Bairro:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.bairro.nome }" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <p:outputLabel styleClass="bold-label" value="Localidade:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.localidade }" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <p:outputLabel styleClass="bold-label" value="Complemento:"/>
+                            <p:outputLabel styleClass="text-label" value="#{ managerPesquisarCliente.entidade.endereco.complemento }" />
+                        </div>
+                    </div>
+                </p:fieldset>
+
+
+
+                <p:fieldset id="telefoneFieldset" >
+                    <h3 class="tituloFieldset">Telefones</h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <p:dataTable id="telefonesDataTable" var="telefone" value="#{ managerPesquisarCliente.entidade.telefones }"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         currentPageReportTemplate="{currentPage} de {totalPages}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum telefone adicionado">
+
+                                <f:facet name="header" >
+                                    <p:outputLabel value="Telefones #{managerPesquisarCliente.entidade.telefones.size() > 0 ? '('.concat(managerPesquisarCliente.entidade.telefones.size()).concat(')'): ''}" />
+                                </f:facet>
+
+
+                                <p:column headerText="Número" >
+                                    <h:outputText value="#{ managerFormatter.formataTelefone(  telefone.numero) }"/>
+                                </p:column>
+                                <p:column headerText="Tipo" >
+                                    <h:outputText value="#{ telefone.tipoTelefone.descricao }"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+
+
+                </p:fieldset>
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check" actionListener="#{ managerPesquisarCliente.delete() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>   
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

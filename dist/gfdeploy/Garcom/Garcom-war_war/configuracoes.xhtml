@@ -1,0 +1,57 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="layout.xhtml">
+        <ui:define name="title">
+            Cadastro de Configuracoes
+        </ui:define>
+
+        <ui:define name="content">
+
+            <script>
+                $('#configuracoesMenu').addClass('active');
+            </script>
+            <h:form id="criarConfiguracoesForm" >
+                <p:growl id="criarConfiguracoesGrowl" autoUpdate="true" />
+                <p:fieldset id="campoFieldset" >
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Nome" for="nomeInputText" />
+                            <p:inputText id="nomeInputText" value="#{ managerCriarConfiguracoes.entidade.nome }"
+                                         required="false" requiredMessage="Nome é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Endereco" for="enderecoInputText" />
+                            <p:inputText id="enderecoInputText" value="#{ managerCriarConfiguracoes.entidade.endereco }"
+                                         required="false" requiredMessage="Endereco é obrigatório" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Contatos" for="contatosInputText" />
+                            <p:inputText id="contatosInputText" value="#{ managerCriarConfiguracoes.entidade.contatos }"
+                                         required="false" requiredMessage="Contatos é obrigatório" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Pasta Temp" for="pastaInputText" />
+                            <p:inputText id="pastaInputText" value="#{ managerCriarConfiguracoes.entidade.caminhoRelatorio }"
+                                         required="false" requiredMessage="Pasta Temp é obrigatório" />
+                        </div>
+                    </div>
+                </p:fieldset >
+                <div class="command">
+                    <p:commandButton styleClass="ui-priority-primary" value="Salvar" icon="ui-icon-disk" actionListener="#{managerCriarConfiguracoes.salvar()}" update=":criarConfiguracoesForm:campoFieldset"/>
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

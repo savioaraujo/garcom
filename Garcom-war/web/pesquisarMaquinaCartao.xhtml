@@ -1,0 +1,91 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="titulo">
+            Pesquisar Maquina Cartão
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="pesquisarMaquinaCartaoForm" >
+                <p:growl id="criarMaquinaCartaoGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Cadastrar" outcome="criarMaquinaCartao.xhtml" icon="ui-icon-plus"
+                                  styleClass="ui-priority-primary" />
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel value="Nome" for="nomeInputText" />
+                            <p:inputText id="nomeInputText" value="#{ managerPesquisarMaquinaCartao.entidade.nome }"
+                                         required="false" requiredMessage="Nome é obrigatório" />
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+                            <p:outputLabel styleClass="bold-label" value="Crédito ?" for="creditoCheckBooleanButton" />
+                            <p:selectOneMenu id="creditoCheckBooleanButton"
+                                             value="#{ managerPesquisarMaquinaCartao.credito }">
+                                <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                <f:selectItem itemLabel="Sim" itemValue="#{true}"/>
+                                <f:selectItem itemLabel="Nao" itemValue="#{false}"/>
+                            </p:selectOneMenu>
+                        </div>
+
+                        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+                            <p:outputLabel styleClass="bold-label" value="Débito ?" for="debitoCheckBooleanButton" />
+                            <p:selectOneMenu id="debitoCheckBooleanButton"
+                                             value="#{ managerPesquisarMaquinaCartao.debito  }">
+                                <f:selectItem itemLabel="Todos" itemValue="#{null}"/>
+                                <f:selectItem itemLabel="Sim" itemValue="#{true}"/>
+                                <f:selectItem itemLabel="Nao" itemValue="#{false}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="command col-md-12">
+                        <p:commandButton styleClass="ui-priority-primary" value="Pesquisar" icon="ui-icon-search"
+                                         actionListener="#{managerPesquisarMaquinaCartao.pesquisar()}" update="pesquisarMaquinaCartaoForm:resultadosFieldset"/>
+                    </div>         
+
+                </p:fieldset>
+                <p:fieldset id="resultadosFieldset" >
+                    <h3 class="tituloFieldset">
+                        Resultados
+                    </h3>
+                    <p:dataTable id="idiomasDataTable" var="maquinaCartao" value="#{ managerPesquisarMaquinaCartao.resultados }"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 currentPageReportTemplate="{currentPage} de {totalPages}"
+                                 rowsPerPageTemplate="5,10,15"
+                                 rows="10" paginator="true" paginatorPosition="bottom" emptyMessage="Nenhum registro encontrado">
+
+                        <f:facet name="header" >
+                            <p:outputLabel value="Maquinas de Cartão #{managerPesquisarMaquinaCartao.resultados.size() > 0 ? '('.concat(managerPesquisarMaquinaCartao.resultados.size()).concat(')'): ''}" />
+                        </f:facet>
+
+                        <p:column headerText="Opções" width="10%" styleClass="options3">
+                            <p:button title="visualizar" icon="ui-icon-search" outcome="visualizarMaquinaCartao.xhtml?id=#{maquinaCartao.id}"/>
+                        </p:column>  
+
+                        <p:column headerText="Nome" >
+                            <h:outputText value="#{ maquinaCartao.nome }"/>
+                        </p:column>
+                    </p:dataTable>
+
+                </p:fieldset>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

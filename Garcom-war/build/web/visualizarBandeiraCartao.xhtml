@@ -1,0 +1,75 @@
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="layout.xhtml">
+
+        <ui:define name="title">
+            Visualizar Bandeira Cartão
+        </ui:define>
+        <ui:define name="titulo">
+            Visualizar Bandeira Cartão
+        </ui:define>
+
+        <ui:define name="content">
+            <script>
+                $('#cadastrosMenu').addClass('active');
+            </script>
+            <h:form id="visualizarBandeiraCartaoForm" >
+                <p:growl id="visualizarBandeiraCartaoGrowl" autoUpdate="true" />
+
+                <div class="actions">
+                    <div id="buttons">
+                        <p:button value="Pesquisar" outcome="pesquisarBandeiraCartao.xhtml" icon="ui-icon-search"
+                                  styleClass="ui-priority-primary" />
+
+                        <p:splitButton value="Ações" process="@none" icon="ui-icon-gear">
+                            <p:menuitem value="Editar" icon="ui-icon-pencil" outcome="criarBandeiraCartao.xhtml">
+                                <f:param name="id" value="#{ managerPesquisarBandeiraCartao.entidade.id}"/>
+                            </p:menuitem>
+                            <p:menuitem value="Excluir" icon="ui-icon-trash" oncomplete="deletarDialog.show();"/>
+                        </p:splitButton>
+                    </div>
+                </div>
+
+                <p:fieldset id="campoFieldset" >
+                    <h3 class="tituloFieldset">
+                        Dados
+                    </h3>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <p:outputLabel  styleClass="bold-label" value="Nome:"/>
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarBandeiraCartao.entidade.nome }" />
+                        </div>
+
+                        <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+                            <p:outputLabel styleClass="bold-label" value="Crédito ?" />
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarBandeiraCartao.entidade.credito ? 'Sim' : 'Nao' }" />
+                        </div>
+
+                        <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2">
+                            <p:outputLabel styleClass="bold-label" value="Débito ?" />
+                            <p:outputLabel  styleClass="text-label" value="#{ managerPesquisarBandeiraCartao.entidade.debito ? 'Sim' : 'Nao' }" />
+                        </div>
+                    </div>
+
+                </p:fieldset>
+
+
+                <p:dialog header="Deseja realmente excluir?" widgetVar="deletarDialog" modal="true"
+                          closable="false" resizable="false" draggable="false" >
+                    <div class="row">
+                        <div class="command">
+                            <p:commandButton value="Sim" icon="ui-icon-check" actionListener="#{ managerPesquisarBandeiraCartao.delete() }"/>
+                            <p:commandButton value="Não" icon="ui-icon-close" oncomplete="deletarDialog.hide()" process="@this"/>
+                        </div>
+                    </div>
+                </p:dialog>   
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
